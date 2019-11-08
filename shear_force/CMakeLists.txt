@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   ur5_ros_arduino
+  robotiq_force_torque_sensor
 )
 
 ## System dependencies are found with CMake's conventions

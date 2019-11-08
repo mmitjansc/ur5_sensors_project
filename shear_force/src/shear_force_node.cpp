@@ -1,19 +1,22 @@
 #include "ros/ros.h"
 #include "ur5_ros_arduino/pressures.h"
 #include "std_msgs/String.h"
-
+#include "std_msgs/Header.h"
+#include "std_msgs/Float32MultiArray.h"
+#include "robotiq_force_torque_sensor/ft_sensor.h"
+#include "geometry_msgs/WrenchStamped.h"
 
 void pressureCallback(const ur5_ros_arduino::pressures::ConstPtr& msg)
 {
-	//ROS_INFO("I heard: [%s]", msg->data.c_str());
+	std_msgs::Header header = msg->header;
+	std_msgs::Float32MultiArray data = msg->vec;
 }
 
-void FTCallback(const std_msgs::String::ConstPtr& msg)
+void FTCallback(const geometry_msgs::WrenchStamped::ConstPtr& msg)
 {
-	//ROS_INFO("I heard: [%s]", msg->data.c_str());
+	std_msgs::Header header = msg->header;
+	geometry_msgs::Wrench wrench = msg->wrench;
 }
-
-
 
 int main(int argc, char **argv)
 {
