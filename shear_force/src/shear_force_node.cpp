@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	fingertip.open("fingertip.csv");
 	
 	ros::Subscriber sub = n.subscribe("/pressure", 1000, pressureCallback);
-	ros::Subscriber sub2 = n.subscribe("/FT_sensor/robotiq_force_torque_sensor", 1000, FTCallback);
+	ros::Subscriber sub2 = n.subscribe("/FT_sensor/robotiq_force_torque_wrench", 1000, FTCallback);
 	
 	while (ros::ok())
 	{
