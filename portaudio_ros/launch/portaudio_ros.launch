@@ -1,6 +1,6 @@
 <launch>	
 	
-	<node pkg="rosserial_python" name="serial_node" type="serial_node.py" args="/dev/ttyACM0 _baud:=115200" output="screen" required="false"/>
+	<node pkg="rosserial_python" name="serial_node" type="serial_node.py" args="/dev/ttyACM0 _baud:=50500" output="screen" required="false"/>
 	
 	<node pkg="portaudio_ros" name="portaudio_ros" type="portaudio_ros" output="screen" required="true"/>
 
