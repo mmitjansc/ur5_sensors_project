@@ -276,6 +276,10 @@ void loop() {
       else {
         oPressure=p_history-delta_down;
       }
+
+      if (oPressure < -200.0) {
+        oPressure = oPressure + 1024;
+      }
     }
     
     

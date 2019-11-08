@@ -55,6 +55,8 @@ int main(int argc, char **argv)
 	ft_sensor.open("ft_sensor.csv");
 	fingertip.open("fingertip.csv");
 	
+	ROS_INFO("Writing data from force torque sensor and fingertips...");
+	
 	ros::Subscriber sub = n.subscribe("/pressure", 1000, pressureCallback);
 	ros::Subscriber sub2 = n.subscribe("/FT_sensor/robotiq_force_torque_wrench", 1000, FTCallback);
 	
