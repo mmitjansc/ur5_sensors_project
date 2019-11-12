@@ -36,7 +36,6 @@ v1.3 - Updated the code to reduce transmitted data bytes
 //#include <std_msgs/Int16MultiArray.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <ur5_ros_arduino/pressures.h>
-#include <ur5_ros_arduino/Num.h>
 
 #define MAX_STRIPS 8
 #define MAX_SENSORS 6
@@ -71,14 +70,10 @@ boolean flagShowTemperature=false;
 ros::NodeHandle nh;
 // Modify Arduino's dedicated memory to publishers, subscribers, bytes in and bytes out:
 //ros::NodeHandle_<ArduinoHardware, 10, 15, 128, 256> nh; // This shows that it was a memory issue!!
-ur5_ros_arduino::Num test_;
 
 //std_msgs::Float32MultiArray press_ros;
 ur5_ros_arduino::pressures press_ros;
 ros::Publisher node("/pressure", &press_ros);
-ros::Publisher test("/chatter", &test_);
-
-int count = 0;
 
 
 void initialize() {
@@ -152,8 +147,6 @@ void setup () {
   press_ros.vec.data_length = addressLength;
   nh.advertise(node);
   pressureHistory = (float *) realloc(pressureHistory, sizeof(float)*(addressLength));
-
-  nh.advertise(test);
 
 }
 
@@ -294,15 +287,7 @@ void loop() {
   }
   
   flagHistoryExists=true;
-
-  test_.first_name = "Marc";
-  test_.last_name = "Mitjans";
-  test_.score = count;
-  test_.age = 27;
-
-  count++;
   
-  test.publish(&test_);
   press_ros.header.stamp = nh.now();
   node.publish(&press_ros); // Publish pressures to topic
   nh.spinOnce(); // spin ROS
