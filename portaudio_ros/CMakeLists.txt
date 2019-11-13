@@ -154,17 +154,9 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # ) 
 
-# PortAudio example files
-add_executable(paex_sine_c++ src/paex_sine_c++.cpp)
-target_link_libraries(paex_sine_c++ libportaudio.a m rt asound jack pthread)  
-
 add_executable(portaudio_ros src/portaudio_ros.cpp)
 target_link_libraries(portaudio_ros libportaudio.a m rt asound jack pthread ${catkin_LIBRARIES})  
 add_dependencies(portaudio_ros ${catkin_EXPORTED_TARGETS})
-
-add_executable(impulse_portaudio_test src/impulse_portaudio_test.cpp)
-target_link_libraries(impulse_portaudio_test libportaudio.a m rt asound jack pthread ${catkin_LIBRARIES})  
-add_dependencies(impulse_portaudio_test ${catkin_EXPORTED_TARGETS})
 
 
 #############
