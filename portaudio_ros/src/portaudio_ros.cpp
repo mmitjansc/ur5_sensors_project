@@ -24,16 +24,18 @@
 #endif
 
 #define TABLE_SIZE   (200) // For sine wave. Unrelated to 2nd order system
-#define LENGTH (44100) // settling_time * SAMPLE_RATE
-
-
 #define GAIN (1.)
 
+
+const int LENGTH = 10 * SAMPLE_RATE; // settling_time * SAMPLE_RATE
+
+
+
 struct syst {
-	float a = 1.614157666028752e-06;
-	float b = 1.614059996985478e-06;
-	float c = -1.979555385907785;
-	float d = 0.999818610557363;
+	float a = 1.623393075003137e-07;
+	float b = 1.623343993233870e-07;
+	float c = -1.999706318049275;
+	float d = 0.999909301165542;
 } s;
 
 struct timespec ts;

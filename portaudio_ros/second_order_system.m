@@ -6,9 +6,10 @@ format long
 syms x y z
 s = tf('s');
 
+st = 2e-0;
+f = 100;
 
-st = 1e-0;
-wd = 1000*2*pi;
+wd = f*2*pi;
 
 sol = solve(st==4/(x*y), wd == y*sqrt(1-x^2));
 e = double(sol.x);
@@ -54,17 +55,17 @@ outs = zeros(1,N);
 
 %% Home-made simulation
 
-for i = 1:N
-
-    sol = (a*u(2) + b*u(3))/Ts - c*y(2) - d*y(3);
-    
-    y(1) = sol;
-    outs(i) = sol;
-    
-    u = [0,u(1:end-1)];
-    y = [0,y(1:end-1)];
-    
-end
+% for i = 1:N
+% 
+%     sol = (a*u(2) + b*u(3))/Ts - c*y(2) - d*y(3);
+%     
+%     y(1) = sol;
+%     outs(i) = sol;
+%     
+%     u = [0,u(1:end-1)];
+%     y = [0,y(1:end-1)];
+%     
+% end
 
 
 % figure;
