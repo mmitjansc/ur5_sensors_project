@@ -1,7 +1,7 @@
 %% Continuous 2-order system to drive the voice coil
 
 %%%%% User inputs %%%%%%%%%%%%%%%%%%
-st = 2; % Settling time (s)
+st = 1; % Settling time (s)
 f = 100; % Frequency of signal (Hz)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -27,15 +27,15 @@
 #define GAIN (1.)
 
 
-const int LENGTH = 10 * SAMPLE_RATE; // settling_time * SAMPLE_RATE
+const int LENGTH = 1 * SAMPLE_RATE; // settling_time * SAMPLE_RATE
 
 
 
 struct syst {
-	float a = 1.623393075003137e-07;
-	float b = 1.623343993233870e-07;
-	float c = -1.999706318049275;
-	float d = 0.999909301165542;
+	float a = 1.631481039642223e-07;
+	float b = 1.631382388530949e-07;
+	float c = -1.999615630476762;
+	float d = 0.999818610557363;
 } s;
 
 struct timespec ts;
