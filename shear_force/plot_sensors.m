@@ -2,8 +2,8 @@
 
 close all
 
-M = readmatrix('ft_sensor.csv');
-L = readmatrix('fingertip.csv');
+M = readmatrix('csv/ft_sensor.csv');
+L = readmatrix('csv/fingertip.csv');
 
 subplot(2,1,1);
 
