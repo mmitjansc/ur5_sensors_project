@@ -52,8 +52,8 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 	ros::Rate loop_rate(1000);
 	
-	ft_sensor.open("ft_sensor.csv");
-	fingertip.open("fingertip.csv");
+	ft_sensor.open("csv/ft_sensor_3.csv");
+	fingertip.open("csv/fingertip_3.csv");
 	
 	ROS_INFO("Writing data from force torque sensor and fingertips...");
 	
