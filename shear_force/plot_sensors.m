@@ -1,9 +1,10 @@
+
 %% Read .csv file from finger sensors
 
 close all
 
-M = readmatrix('csv/ft_sensor_2.csv');
-L = readmatrix('csv/fingertip_2.csv');
+M = readmatrix('csv/ft_sensor.csv');
+L = readmatrix('csv/fingertip.csv');
 
 subplot(2,1,1);
 
@@ -31,4 +32,5 @@ title('Force values from fingertips');
 xlabel('Time (s)');
 ylabel('Pressure (u)');
 grid on
+
 legend('ft1','ft2','ft3','ft4','ft5','ft6');
