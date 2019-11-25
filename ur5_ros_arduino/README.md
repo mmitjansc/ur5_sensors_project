@@ -12,8 +12,10 @@ These lines will rebuild all ROS libraries for Arduino, including the header fil
 
 ## Run
 
-    $ rosrun rosserial_python serial_node.py /dev/ttyACM0 _baud:=115200
+    $ rosrun rosserial_python serial_node.py /dev/ttyACM0 _baud:=50500
     
 The baud rate is defined inside `arduino_code.ino`, and needs to match the argument `_baud`. This node will make the Arduino Mega publish to the topic */pressure* the data obtained from the sensors.
 
-The node `ros_ard.cpp` writes in a .csv file this data.
+Note that the value for the `_baud` parameter has been set to closely match Robotiq's force sensor publishing rate (~62 Hz). This value was obtained empirically, as the publishing rate depends both on the baud rate of the Arduino and the loop rate of the code.
+
+The node `ros_ard.cpp` writes in a .csv file the obtained data.
