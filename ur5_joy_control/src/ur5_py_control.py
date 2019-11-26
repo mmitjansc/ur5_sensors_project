@@ -46,7 +46,7 @@ def joyCallback(data):
 	axes[4:6] = 0.5-0.5*axes[4:6]
 	
 	buttons = np.array(data.buttons)	
-	scale_pos = 0.1
+	scale_pos = 0.15
 	scale_or = 0.8
 	#print(axes)
 
