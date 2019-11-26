@@ -41,91 +41,26 @@ def joyCallback(data):
 	count += 1 
 	
 	axes = data.axes
-	buttons = data.buttons
+	buttons = data.buttons	
+	sc = 0.1
 	
-	#rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-	
+	height = 0.0
+	if buttons[4] > 0:
+		height = -1.0
 	if buttons[5] > 0:
+		height = 1.0
 	
-		'''
-		pose_goal = group.get_current_pose().pose
-		pose_goal.position.z += 0.0 #scale * buttons[5]
+	pub.publish("speedl([%f,-%f,%f,0.0,0.0,0.0], 0.2, 100.0)"%(sc*axes[0],sc*axes[1],sc*height)) # This doesn't work
 		
-		group.set_pose_target(pose_goal)
-		
-		# Move group:
-		plan = group.go(wait=True)
-		# Calling `stop()` ensures that there is no residual movement
-		group.stop()
-		# It is always good to clear your targets after planning with poses.
-		# Note: there is no equivalent function for clear_joint_value_targets()
-		group.clear_pose_targets()
-		'''
-		waypoints = []
-
-		wpose = group.get_current_pose().pose
-
-		wpose.position.z += scale * buttons[5]  # First move up (z)
-		waypoints.append(copy.deepcopy(wpose))
-
-		# We want the Cartesian path to be interpolated at a resolution of 1 cm
-		# which is why we will specify 0.01 as the eef_step in Cartesian
-		# translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-		(plan, fraction) = group.compute_cartesian_path(
-										   waypoints,   # waypoints to follow
-										   0.01,        # eef_step
-										   0.0)         # jump_threshold
-		#group.execute(plan, wait=True)
-		group.stop()
-		
-		
-		pub.publish("speedl([0.0,0.0,0.05,0.0,0.0,0.0], 0.2, 100.0)") # This doesn't work
-		#pub.publish(String(cmd_str))
-
-		print("Moving...")
-		
-		
-	if buttons[5] < 1:
+	stop = True
+	for ax in axes[0:3]:
+		if ax > 0.3 or ax<-0.3:
+			stop = False
+			break
 	
-		'''
-		pose_goal = group.get_current_pose().pose
-		pose_goal.position.z += 0.0 #scale * buttons[5]
-		
-		group.set_pose_target(pose_goal)
-		
-		# Move group:
-		plan = group.go(wait=True)
-		# Calling `stop()` ensures that there is no residual movement
-		group.stop()
-		# It is always good to clear your targets after planning with poses.
-		# Note: there is no equivalent function for clear_joint_value_targets()
-		group.clear_pose_targets()
-		'''
-		waypoints = []
-
-		wpose = group.get_current_pose().pose
-		wpose.position.z -= scale * buttons[4]  # First move up (z)
-		waypoints.append(copy.deepcopy(wpose))
-
-		# We want the Cartesian path to be interpolated at a resolution of 1 cm
-		# which is why we will specify 0.01 as the eef_step in Cartesian
-		# translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-		(plan, fraction) = group.compute_cartesian_path(
-										   waypoints,   # waypoints to follow
-										   0.01,        # eef_step
-										   0.0)         # jump_threshold
-		#group.execute(plan, wait=True)
-		group.stop()
-		
-		cmd_str = "def move_arm():\n"
-		cmd_str += "\tspeedl([0.0,0.0,0.05,0.0,0.0,0.0], 0.2, 1.5)\n"
-		cmd_str += "end"
-		pub.publish("stopl(0.3)") # This doesn't work
-		#pub.publish(String(cmd_str))
-		#pub.publish("")
-		
-		#pub.publish("powerdown()") # This works
-		print("Stopping...")
+	if stop and buttons[5]<1 and buttons[4]<1:
+		pub.publish("stopl(0.3)")
+		pass
 		
 		
 if __name__ == '__main__':	
