@@ -78,18 +78,14 @@ def joyCallback(data):
 		#group.execute(plan, wait=True)
 		group.stop()
 		
-		cmd_str = "def move_arm():\n"
-		cmd_str += "\tspeedl([0.0,0.0,0.03,0.0,0.0,0.0], 0.2, 1.5)\n"
-		cmd_str += "end"
-		#pub.publish("speedl([0.0,0.0,0.01,0.0,0.0,0.0], 0.5, 0.5)") # This doesn't work
-		pub.publish(String(cmd_str))
-		#pub.publish("")
 		
-		#pub.publish("powerdown()") # This works
-		print("Publishing...")
+		pub.publish("speedl([0.0,0.0,0.05,0.0,0.0,0.0], 0.2, 100.0)") # This doesn't work
+		#pub.publish(String(cmd_str))
+
+		print("Moving...")
 		
 		
-	if buttons[4] > 0:
+	if buttons[5] < 1:
 	
 		'''
 		pose_goal = group.get_current_pose().pose
@@ -118,8 +114,19 @@ def joyCallback(data):
 										   waypoints,   # waypoints to follow
 										   0.01,        # eef_step
 										   0.0)         # jump_threshold
-		group.execute(plan, wait=True)
+		#group.execute(plan, wait=True)
 		group.stop()
+		
+		cmd_str = "def move_arm():\n"
+		cmd_str += "\tspeedl([0.0,0.0,0.05,0.0,0.0,0.0], 0.2, 1.5)\n"
+		cmd_str += "end"
+		pub.publish("stopl(0.3)") # This doesn't work
+		#pub.publish(String(cmd_str))
+		#pub.publish("")
+		
+		#pub.publish("powerdown()") # This works
+		print("Stopping...")
+		
 		
 if __name__ == '__main__':	
 	
