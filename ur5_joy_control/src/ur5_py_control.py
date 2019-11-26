@@ -11,6 +11,7 @@ from math import pi
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 from moveit_commander.conversions import pose_to_list
+import numpy as np
 
 def all_close(goal, actual, tolerance):
   """
@@ -37,29 +38,35 @@ def all_close(goal, actual, tolerance):
 def joyCallback(data):
 	
 	global count
-	print(count)
+	#print(count)
 	count += 1 
 	
-	axes = data.axes
-	buttons = data.buttons	
-	sc = 0.1
+	axes = np.array(data.axes)
+	axes[np.absolute(axes)<0.3] = 0.0
+	axes[4:6] = 0.5-0.5*axes[4:6]
 	
+	buttons = np.array(data.buttons)	
+	scale_pos = 0.1
+	scale_or = 0.8
+	#print(axes)
+
 	height = 0.0
 	if buttons[4] > 0:
 		height = -1.0
 	if buttons[5] > 0:
 		height = 1.0
 	
-	pub.publish("speedl([%f,-%f,%f,0.0,0.0,0.0], 0.2, 100.0)"%(sc*axes[0],sc*axes[1],sc*height)) # This doesn't work
+	pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.5, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
+		scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
 		
 	stop = True
-	for ax in axes[0:3]:
-		if ax > 0.3 or ax<-0.3:
+	for ax in np.absolute(axes[0:6]):
+		if ax > 0.0:
 			stop = False
 			break
 	
 	if stop and buttons[5]<1 and buttons[4]<1:
-		pub.publish("stopl(0.3)")
+		pub.publish("stopl(1.0, 5.0)")
 		pass
 		
 		
