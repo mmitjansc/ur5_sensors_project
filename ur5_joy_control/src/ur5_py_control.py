@@ -67,7 +67,11 @@ def joyCallback(data):
 	
 	if stop and buttons[5]<1 and buttons[4]<1:
 		pub.publish("stopl(1.0, 5.0)")
-		pass
+		
+		
+	if buttons[7] > 0:
+		pub.publish("powerdown()")
+		#pass
 		
 		
 if __name__ == '__main__':	
