@@ -75,8 +75,15 @@ def joyCallback(data):
 										   waypoints,   # waypoints to follow
 										   0.01,        # eef_step
 										   0.0)         # jump_threshold
-		group.execute(plan, wait=True)
+		group.execute(plan, wait=False)
 		group.stop()
+		
+		cmd_str = "def move_arm():\n"
+		cmd_str += "\tspeedl([0.0,0.0,0.01,0.0,0.0,0,0], 0.5, 0.5)\n"
+		cmd_str += "end"
+		pub.publish(String(cmd_str)) # This doesn't work
+		pub.publish("powerdown()") # This works
+		print("Publishing...")
 		
 	if buttons[4] > 0:
 	
@@ -121,6 +128,7 @@ if __name__ == '__main__':
 	rate = rospy.Rate(100) # Hz
 	
 	sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
+	pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
 	
 	# Setup robot UR5
 	robot = moveit_commander.RobotCommander()
