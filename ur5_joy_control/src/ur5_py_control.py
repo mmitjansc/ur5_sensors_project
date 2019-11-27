@@ -115,30 +115,6 @@ if __name__ == '__main__':
 	group_name = "manipulator"
 	group = moveit_commander.MoveGroupCommander(group_name)
 
-	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
-	ctrl_c = False
-				
-	while not ctrl_c:
-		connections = pub.get_num_connections()
-		if connections > 0:
-			# Gripper
-			command = outputMsg.CModel_robot_output();
-			command.rACT = 0
-
-			gripper_pub.publish(command) # Reset gripper
-			
-			command = outputMsg.CModel_robot_output();
-			command.rACT = 1
-			command.rGTO = 1
-			command.rSP  = 255
-			command.rFR  = 150
-
-			gripper_pub.publish(command) # Activate gripper
-			ctrl_c = True
-			
-		else:
-			rospy.Rate(1).sleep()
-
 	while not rospy.is_shutdown():
 		
 		#print group.get_current_pose()

@@ -45,13 +45,33 @@ if __name__ == '__main__':
 	rospy.init_node('gripperServer')
 	server = GripperAction('gripperAction')
 
-	# Gripper publisher
 	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
+	ctrl_c = False
 	
 	command = outputMsg.CModel_robot_output();
-	command.rACT = 1
-	command.rGTO = 1
+				
+	while not ctrl_c:
+		connections = gripper_pub.get_num_connections()
+
+		if connections > 0:
+			# Gripper
+			
+			command.rACT = 0
+
+			gripper_pub.publish(command) # Reset gripper
+			
+			command = outputMsg.CModel_robot_output();
+			command.rACT = 1
+			command.rGTO = 1
+			command.rSP  = 255
+			command.rFR  = 150
+
+			gripper_pub.publish(command) # Activate gripper
+			ctrl_c = True
+			
+		else:
+			rospy.Rate(1).sleep()
+			
 	command.rSP  = 15
-	command.rFR  = 150
 
 	rospy.spin()
