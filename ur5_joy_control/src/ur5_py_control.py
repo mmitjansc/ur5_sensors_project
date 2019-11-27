@@ -11,6 +11,7 @@ from math import pi
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
 from moveit_commander.conversions import pose_to_list
+from robotiq_c_model_control.msg import _CModel_robot_output  as outputMsg
 import numpy as np
 
 def all_close(goal, actual, tolerance):
@@ -86,6 +87,7 @@ if __name__ == '__main__':
 	
 	sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
 	pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
+	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
 	
 	# Setup robot UR5
 	robot = moveit_commander.RobotCommander()
