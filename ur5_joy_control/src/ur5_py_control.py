@@ -3,8 +3,6 @@
 import sys
 import copy
 import rospy
-import moveit_commander
-import moveit_msgs.msg
 import geometry_msgs.msg as gm
 import numpy as np
 from math import pi
@@ -13,28 +11,6 @@ from sensor_msgs.msg import Joy
 from moveit_commander.conversions import pose_to_list
 from robotiq_c_model_control.msg import _CModel_robot_output  as outputMsg
 import numpy as np
-
-def all_close(goal, actual, tolerance):
-  """
-  Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
-  @param: goal       A list of floats, a Pose or a PoseStamped
-  @param: actual     A list of floats, a Pose or a PoseStamped
-  @param: tolerance  A float
-  @returns: bool
-  """
-  all_equal = True
-  if type(goal) is list:
-    for index in range(len(goal)):
-      if abs(actual[index] - goal[index]) > tolerance:
-        return False
-
-  elif type(goal) is geometry_msgs.msg.PoseStamped:
-    return all_close(goal.pose, actual.pose, tolerance)
-
-  elif type(goal) is geometry_msgs.msg.Pose:
-    return all_close(pose_to_list(goal), pose_to_list(actual), tolerance)
-
-  return True
 
 def joyCallback(data):
 	
@@ -72,7 +48,6 @@ def joyCallback(data):
 		
 	if buttons[7] > 0:
 		pub.publish("powerdown()")
-		#pass
 		
 		
 if __name__ == '__main__':	
@@ -80,8 +55,7 @@ if __name__ == '__main__':
 	count = 0
 	scale = 0.01
 	
-	moveit_commander.roscpp_initialize(sys.argv)
-	rospy.init_node('ur5_node', anonymous=True)
+	rospy.init_node('ur5_joy_node', anonymous=True)
 	
 	rate = rospy.Rate(100) # Hz
 	
@@ -94,12 +68,6 @@ if __name__ == '__main__':
 	scene = moveit_commander.PlanningSceneInterface()
 	group_name = "manipulator"
 	group = moveit_commander.MoveGroupCommander(group_name)
-	
-	# Setting tolerances and scaling factors:
-	group.set_max_velocity_scaling_factor(0.1)
-	group.set_goal_position_tolerance(1e-5)
-	group.set_goal_joint_tolerance(1e-5)
-	print "Goal tolerance: ", group.get_goal_joint_tolerance()	
 
 	while not rospy.is_shutdown():
 		rate.sleep()
