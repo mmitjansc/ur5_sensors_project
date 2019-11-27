@@ -1,0 +1,7 @@
+<launch>	
+	
+	<node pkg="ur5_joy_control" name="gripper_server" type="gripper_server.py" output="screen" required="false"/>
+	
+	<node pkg="ur5_joy_control" name="ur5_py_control" type="ur5_py_control.py" output="screen" required="true"/>
+
+</launch>

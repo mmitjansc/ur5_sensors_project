@@ -6,7 +6,7 @@ import rospy
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg as gm
-import numpy as np
+
 from math import pi
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
@@ -15,7 +15,6 @@ from robotiq_c_model_control.msg import _CModel_robot_output  as outputMsg
 import numpy as np
 
 import actionlib
-import actionlib_tutorials.msg
 import ur5_joy_control.msg
 
 
@@ -25,18 +24,24 @@ limits = np.array([[0.208, 0.719, 0.429],\
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
 
-def gripper_acion(order):
+def gripper_client(order):
 	
 	client = actionlib.SimpleActionClient('gripperAction', ur5_joy_control.msg.GripperAction)
-	client = wait_for_server()
 	
-	goal = actionlib_tutorials.msg.FibonacciGoal(order=order)
+	#print("Waiting for server...")
+	client.wait_for_server()
+	
+	if order == 0:
+		client.cancel_all_goals()
+		return None
+	
+	goal = ur5_joy_control.msg.GripperGoal(order=order)
 
 	# Sends the goal to the action server.
 	client.send_goal(goal)
 
 	# Waits for the server to finish performing the action.
-	client.wait_for_result() # Not needed?
+	#client.wait_for_result() # Not needed?
 
 	# Prints out the result of executing the action
 	return client.get_result()  # A FibonacciResult
@@ -53,7 +58,7 @@ def joyCallback(data):
 	axes[4:6] = 0.5-0.5*axes[4:6]
 	
 	buttons = np.array(data.buttons)	
-	scale_pos = 0.15
+	scale_pos = 0.2
 	scale_or = 0.8
 	#print(axes)
 
@@ -63,7 +68,7 @@ def joyCallback(data):
 	if buttons[5] > 0:
 		height = 1.0	
 	
-	pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.5, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
+	pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
 		scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
 		
 	stop = True
@@ -77,18 +82,18 @@ def joyCallback(data):
 		
 	# Gripper control:
 	if buttons[0] > 0:
-		gripper_val += 1
+		print("Closing gripper")
+		gripper_position = gripper_client(1)
 		#START ACTION
+	
+	elif buttons[1] > 0:
+		print("Opening gripper")
+		gripper_position = gripper_client(-1)
+		#START ACTION
+	
 	else:
-		#STOP ACTION
-		pass
+		gripper_client(0)
 		
-	if buttons[1] > 0:
-		gripper_val -= 1
-		#START ACTION
-	else:
-		#STOP ACTION
-		pass
 		
 		
 	if buttons[7] > 0:
@@ -104,16 +109,7 @@ if __name__ == '__main__':
 	sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
 	pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
 	
-	# Gripper publisher
-	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
-	command = outputMsg.CModel_robot_output();
-	command.rACT = 0
-	gripper_pub.publish(command) # Reset gripper
-	command.rACT = 1
-	command.rGTO = 1
-	command.rSP  = 255
-	command.rFR  = 150
-	gripper_pub.publish(command) # Activate gripper
+	
 	
 	# Setup robot UR5
 	robot = moveit_commander.RobotCommander()
@@ -123,7 +119,7 @@ if __name__ == '__main__':
 
 	while not rospy.is_shutdown():
 		
-		print group.get_current_pose()
+		#print group.get_current_pose()
 		
 		# LIMITS:
 		curr_pos = group.get_current_pose().pose.position
