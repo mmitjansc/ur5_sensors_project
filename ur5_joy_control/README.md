@@ -4,13 +4,9 @@ To enable the Xbox joystick, first connect it via USB to the PC. Then run the fo
 
 	$ sudo xboxdrv --silent --detach-kernel-driver
 
-If a joystick different than `js0` is set, we need to tell ROS which joystick to use:
+Now we can run the ROS launch file:
 
-	$ rosparam set joy_node/dev "/dev/input/jsX"
-
-Now we can run the ROS joy node:
-
-	$ rosrun joy joy_node
+	$ roslaunch ur5_joy_control ur5_joy_control.launch
 	
-The `joy_node` node will publish messages of type `sensor_msgs/Joy` to the topic `/joy`, consisting of a header, a float32 *axis* array and an int32 *buttons* array. All values go from -1.0 to 1.0.
+The `joy_node` node will publish messages of type `sensor_msgs/Joy` to the topic `/joy`, consisting of a header, a float32 *axis* array and an int32 *buttons* array. Values go from -1.0 to 1.0.
 
