@@ -10,7 +10,7 @@ import numpy as np
 import actionlib
 import ur5_joy_control.msg
 
-class FibonacciAction(object):
+class GripperAction(object):
     # create messages that are used to publish feedback/result
     _feedback = ur5_joy_control.msg.GripperFeedback()
     _result = ur5_joy_control.msg.GripperResult()
@@ -29,8 +29,7 @@ class FibonacciAction(object):
 		self._feedback.gripper_pos = 0
 		
 		while not self._as.is_preempt_requested():
-			
-			if count > 10000:
+			if count > 100000:
 				command.rPR += goal.order
 				command.rPR = min(max(command.rPR,0),255)
 				gripper_pub.publish(command)
@@ -42,19 +41,17 @@ class FibonacciAction(object):
 		self._as.set_succeeded(self._result)
         
 if __name__ == '__main__':
-	rospy.init_node('fibonacci')
-
-	server = FibonacciAction('gripperAction')
+	
+	rospy.init_node('gripperServer')
+	server = GripperAction('gripperAction')
 
 	# Gripper publisher
 	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
+	
 	command = outputMsg.CModel_robot_output();
-	command.rACT = 0
-	gripper_pub.publish(command) # Reset gripper
 	command.rACT = 1
 	command.rGTO = 1
-	command.rSP  = 255
+	command.rSP  = 15
 	command.rFR  = 150
-	gripper_pub.publish(command) # Activate gripper
 
 	rospy.spin()

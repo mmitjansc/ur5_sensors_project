@@ -82,12 +82,12 @@ def joyCallback(data):
 		
 	# Gripper control:
 	if buttons[0] > 0:
-		print("Closing gripper")
+		#print("Closing gripper")
 		gripper_position = gripper_client(1)
 		#START ACTION
 	
 	elif buttons[1] > 0:
-		print("Opening gripper")
+		#print("Opening gripper")
 		gripper_position = gripper_client(-1)
 		#START ACTION
 	
@@ -98,7 +98,7 @@ def joyCallback(data):
 		
 	if buttons[7] > 0:
 		pub.publish("powerdown()")
-		
+
 		
 if __name__ == '__main__':	
 	
@@ -109,13 +109,35 @@ if __name__ == '__main__':
 	sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
 	pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
 	
-	
-	
 	# Setup robot UR5
 	robot = moveit_commander.RobotCommander()
 	scene = moveit_commander.PlanningSceneInterface()
 	group_name = "manipulator"
 	group = moveit_commander.MoveGroupCommander(group_name)
+
+	gripper_pub = rospy.Publisher("/CModelRobotOutput", outputMsg.CModel_robot_output, queue_size=1)
+	ctrl_c = False
+				
+	while not ctrl_c:
+		connections = pub.get_num_connections()
+		if connections > 0:
+			# Gripper
+			command = outputMsg.CModel_robot_output();
+			command.rACT = 0
+
+			gripper_pub.publish(command) # Reset gripper
+			
+			command = outputMsg.CModel_robot_output();
+			command.rACT = 1
+			command.rGTO = 1
+			command.rSP  = 255
+			command.rFR  = 150
+
+			gripper_pub.publish(command) # Activate gripper
+			ctrl_c = True
+			
+		else:
+			rospy.Rate(1).sleep()
 
 	while not rospy.is_shutdown():
 		
