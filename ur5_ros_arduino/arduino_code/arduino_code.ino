@@ -47,7 +47,7 @@ v1.3 - Updated the code to reduce transmitted data bytes
 #define SENSOR_ALL_ON 0x0C
 #define SENSOR_ALL_OFF 0x0D
 
-#define _baud 115200
+#define _baud 50500
 
 #define pinIn A8
 #define pinOut A1
