@@ -130,7 +130,7 @@ void setup () {
 
   //Serial.begin(_baud);
   Wire.begin();
-  Serial.begin(_baud);
+  //Serial.begin(_baud);
   checkAddresses(); // check how many sensors are connected
  
   // for each found sensor, read the coefficients ..
@@ -292,7 +292,7 @@ void loop() {
   
   flagHistoryExists=true;
 
-  Serial.println(analogRead(pinIn));
+  //Serial.println(analogRead(pinIn));
   
   ir_data.data = analogRead(pinIn);
   
