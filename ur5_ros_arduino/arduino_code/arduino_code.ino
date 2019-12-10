@@ -47,9 +47,9 @@ v1.3 - Updated the code to reduce transmitted data bytes
 #define SENSOR_ALL_ON 0x0C
 #define SENSOR_ALL_OFF 0x0D
 
-#define _baud 50500
+#define _baud 115200
 
-#define pinIn A0
+#define pinIn A8
 #define pinOut A1
 
 
@@ -130,6 +130,7 @@ void setup () {
 
   //Serial.begin(_baud);
   Wire.begin();
+  Serial.begin(_baud);
   checkAddresses(); // check how many sensors are connected
  
   // for each found sensor, read the coefficients ..
@@ -290,6 +291,8 @@ void loop() {
   }
   
   flagHistoryExists=true;
+
+  Serial.println(analogRead(pinIn));
   
   ir_data.data = analogRead(pinIn);
   
