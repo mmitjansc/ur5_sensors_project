@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include "std_msgs/String.h"
+#include "std_msgs/Int16.h"
 #include "ur5_ros_arduino/pressures.h"
 #include "std_msgs/Float32MultiArray.h"
 
@@ -41,6 +42,7 @@ struct syst {
 struct timespec ts;
 std::ofstream myfile;
 bool writeFile = false;
+bool found_object = false;
 
 namespace str {
 	// Template to cast from anything to string
@@ -198,6 +200,41 @@ public:
 
         return (err == paNoError);
     }
+    
+    void IRCallback(const std_msgs::Int16::ConstPtr& msg) {
+		
+		int sensor_val = msg->data;
+		
+		
+		if (sensor_val > 1000 && found_object == false) {
+			j = 0;
+			
+			found_object = true;
+			this->abort();
+			this->close();
+			
+			
+			if (this->open(Pa_GetDefaultOutputDevice()))
+			{
+				if (this->start())
+				{
+					printf("%d - IR signal sent!\n",count);
+					count++;
+					// Let's remove the sleep...
+					//Pa_Sleep( sleep_ms );
+					
+					//this->abort();
+				}
+
+				// Remove close as well? Will this work?
+				//this->close();
+			}
+		}
+		
+		else if (sensor_val < 1000) {
+			found_object = false;
+		}
+	}
     
     void pressuresCallback(const ur5_ros_arduino::pressures::ConstPtr& msg) {
 		
@@ -407,7 +444,8 @@ int main(int argc, char **argv)
 	
 	Impulse imp;
 	
-	ros::Subscriber sub = nh.subscribe("/pressure", 1, &Impulse::pressuresCallback, &imp);		
+	ros::Subscriber sub = nh.subscribe("/pressure", 1, &Impulse::pressuresCallback, &imp);	
+	ros::Subscriber ir_sub = nh.subscribe("/ir_sensor", 1, &Impulse::IRCallback, &imp);		
 	
 	if (writeFile) {
 		std::string csv("ys.csv");

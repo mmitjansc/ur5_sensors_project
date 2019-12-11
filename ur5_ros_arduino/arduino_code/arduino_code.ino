@@ -49,7 +49,7 @@ v1.3 - Updated the code to reduce transmitted data bytes
 
 #define _baud 50500
 
-#define pinIn A8
+#define pinIn A5
 #define pinOut A1
 
 
