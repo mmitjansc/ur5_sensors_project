@@ -2,13 +2,15 @@
 
 #define THRESH 500
 
-const int analogPin = A0;
+const int inPin = A0;
+const int outPin = A1;
 int sensorVal = 0;
 
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(outPin,OUTPUT);
 }
 
 void loop() {
@@ -18,6 +20,8 @@ void loop() {
   if sensorVal > THRESH {
     // Publish something somewhere
   }
+
+  delay(100); // X milliseconds
   
   
 }
