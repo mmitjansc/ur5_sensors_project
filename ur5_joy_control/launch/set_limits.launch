@@ -8,4 +8,6 @@
 	
 	<node pkg="ur5_joy_control" name="ur5_py_control" type="ur5_py_control.py" output="screen" required="true"/>
 
+	<node pkg="ur5_joy_control" name="set_ur5_limits" type="set_ur5_limits.py" output="screen" required="true"/>
+
 </launch>

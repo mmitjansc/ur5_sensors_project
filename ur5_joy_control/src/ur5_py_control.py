@@ -6,6 +6,7 @@ import rospy
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg as gm
+import pickle
 
 from math import pi
 from std_msgs.msg import String
@@ -116,18 +117,5 @@ if __name__ == '__main__':
 	group = moveit_commander.MoveGroupCommander(group_name)
 
 	while not rospy.is_shutdown():
-		
-		#print group.get_current_pose()
-		
-		# LIMITS:
-		curr_pos = group.get_current_pose().pose.position
-		if (curr_pos.x<limits[1,0] and axes[0]>0) or (curr_pos.x>limits[0,0] and axes[0]<0):
-			pub.publish("stopl(1.0, 5.0)")
-			
-		if (curr_pos.y<limits[1,1] and axes[1]<0) or (curr_pos.y>limits[0,1] and axes[1]>0):
-			pub.publish("stopl(1.0, 5.0)")
-			
-		if (curr_pos.z<limits[1,2] and buttons[4]>0) or (curr_pos.z>limits[0,2] and buttons[5]>0):
-			pub.publish("stopl(1.0, 5.0)")
 		
 		rate.sleep()
