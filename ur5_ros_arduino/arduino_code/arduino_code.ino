@@ -30,7 +30,7 @@ v1.3 - Updated the code to reduce transmitted data bytes
 #include <ros.h>
 #include <Wire.h>
 
-
+#include <std_msgs/Int16.h>
 #include <std_msgs/String.h>
 //#include <std_msgs/Int8MultiArray.h>
 //#include <std_msgs/Int16MultiArray.h>
@@ -48,6 +48,9 @@ v1.3 - Updated the code to reduce transmitted data bytes
 #define SENSOR_ALL_OFF 0x0D
 
 #define _baud 50500
+
+#define pinIn A5
+#define pinOut A1
 
 
 float a0[NUM_SENSORS];
@@ -73,7 +76,9 @@ ros::NodeHandle nh;
 
 //std_msgs::Float32MultiArray press_ros;
 ur5_ros_arduino::pressures press_ros;
-ros::Publisher node("/pressure", &press_ros);
+ros::Publisher press_pub("/pressure", &press_ros);
+std_msgs::Int16 ir_data;
+ros::Publisher ir_pub("/ir_sensor", &ir_data);
 
 
 void initialize() {
@@ -125,13 +130,15 @@ void setup () {
 
   //Serial.begin(_baud);
   Wire.begin();
+  //Serial.begin(_baud);
   checkAddresses(); // check how many sensors are connected
  
   // for each found sensor, read the coefficients ..
   for(int i=0;i<addressLength;i++) {
     readCoeffs(addressArray[i],i);
   }
-  
+
+  pinMode(pinOut, OUTPUT);
 
   // ROS setup
   nh.getHardware()->setBaud(_baud);
@@ -145,7 +152,8 @@ void setup () {
   press_ros.vec.data = (float *)malloc(sizeof(float)*addressLength);
   press_ros.vec.layout.dim_length = 0;
   press_ros.vec.data_length = addressLength;
-  nh.advertise(node);
+  nh.advertise(press_pub);
+  nh.advertise(ir_pub);
   pressureHistory = (float *) realloc(pressureHistory, sizeof(float)*(addressLength));
 
 }
@@ -279,17 +287,20 @@ void loop() {
     //Serial.println(oPressure);
     pressureHistory[i] = oPressure;
     press_ros.vec.data[i] = oPressure; // Topic data
-    //press_ros.data[i*2] = delta_up;
-    //press_ros.data[2*i+1] = delta_down;
-    //foo_array[i] = oPressure;
-    //Serial.println(sizeof(pressureHistory)/sizeof(pressureHistory[0]));
-    
+
   }
   
   flagHistoryExists=true;
+
+  //Serial.println(analogRead(pinIn));
+  
+  ir_data.data = analogRead(pinIn);
   
   press_ros.header.stamp = nh.now();
-  node.publish(&press_ros); // Publish pressures to topic
+  
+  press_pub.publish(&press_ros); // Publish pressures to topic  
+  ir_pub.publish(&ir_data);
+  
   nh.spinOnce(); // spin ROS
 
 }
