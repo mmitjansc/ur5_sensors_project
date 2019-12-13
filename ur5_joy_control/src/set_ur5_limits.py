@@ -49,12 +49,16 @@ class Workspace:
 			return
 		
 		try:
-			self.BoxMin = np.concatenate((self.BoxMin,min_box),axis=0)
-			self.BoxMax = np.concatenate((self.BoxMax,max_box),axis=0)
+			
+			self.BoxMin = np.concatenate((self.BoxMin,min_box[np.newaxis,:]),axis=0)
+			self.BoxMax = np.concatenate((self.BoxMax,max_box[np.newaxis,:]),axis=0)
+			print self.BoxMin
 		except:
 			self.BoxMin = min_box[np.newaxis,:]
 			self.BoxMax = max_box[np.newaxis,:]
-
+			
+		print "Box added"
+		
 def joyCallback(data):
 	
 	global finish_box
@@ -90,20 +94,15 @@ if __name__ == '__main__':
 	
 	while not finish_ws:
 		c = raw_input('Press enter to add new box') 
-		print('Adding box...')
+		print('Adding box... Press "Y" to save box, or "X" to finish setting boxes.')
 		ws.addBox()
-		print "Box added"
+		
 	
-	print "Workspace created"
+	print "Workspace created!"
 	
 	with open('ws.pkl','wb') as output:
 		pickle.dump(ws,output,pickle.HIGHEST_PROTOCOL)
-		
-
-	print 'min limits:'
-	print ws.BoxMin
-	print 'max limits:'
-	print ws.BoxMax
 	
 	print 'Limits saved!'
-
+	print ws.BoxMax
+	print ws.BoxMin

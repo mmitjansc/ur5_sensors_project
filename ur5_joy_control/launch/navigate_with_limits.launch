@@ -8,6 +8,6 @@
 	
 	<node pkg="ur5_joy_control" name="ur5_py_control" type="ur5_py_control.py" output="screen" required="true"/>
 
-	<node pkg="ur5_joy_control" name="ur5_navigate" type="ur5_navigate.py" output="screen" required="true"/>
+	<node pkg="ur5_joy_control" name="ur5_navigate_with_limits" type="ur5_navigate_with_limits.py" output="screen" required="true"/>
 
 </launch>

@@ -52,21 +52,47 @@ if __name__ == '__main__':
 		ws = pickle.load(in_put)
 	
 	limits = np.concatenate((ws.BoxMax,ws.BoxMin),axis=0)
-	print limits
+	
+	# LIMITS:
+	max_lims = ws.BoxMax
+	min_lims = ws.BoxMin
+	
+	print 'Max limits: '
+	print max_lims
+	print 'Min limits: '
+	print min_lims, '\n'
 
 	while not rospy.is_shutdown():
 		
 		#print group.get_current_pose()
 		
-		# LIMITS:
+		
 		curr_pos = group.get_current_pose().pose.position
-		if (curr_pos.x<limits[1,0] and axes[0]>0) or (curr_pos.x>limits[0,0] and axes[0]<0):
-			pub.publish("stopl(1.0, 5.0)")
+		stop = False
+		count_x = 0
+		count_y = 0
+		count_z = 0
+		
+		num_lims = max_lims.shape[0]
+		total_count = 0
+		
+		for j in range(num_lims):
 			
-		if (curr_pos.y<limits[1,1] and axes[1]<0) or (curr_pos.y>limits[0,1] and axes[1]>0):
-			pub.publish("stopl(1.0, 5.0)")
+			temp_count = 0
 			
-		if (curr_pos.z<limits[1,2] and buttons[4]>0) or (curr_pos.z>limits[0,2] and buttons[5]>0):
-			pub.publish("stopl(1.0, 5.0)")
+			if (curr_pos.x<min_lims[j,0] and axes[0]>0) or (curr_pos.x>max_lims[j,0] and axes[0]<0):
+				temp_count += 1
+				
+			if (curr_pos.y<min_lims[j,1] and axes[1]<0) or (curr_pos.y>max_lims[j,1] and axes[1]>0):
+				temp_count += 1
+				
+			if (curr_pos.z<min_lims[j,2] and buttons[4]>0) or (curr_pos.z>max_lims[j,2] and buttons[5]>0):
+				temp_count += 1
+		
+			print(temp_count)
+			total_count += temp_count/3
+			 
+		if total_count == num_lims:
+			pub.publish("stopl(1.0,5.0)")
 		
 		rate.sleep()
