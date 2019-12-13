@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import time
 
 from std_msgs.msg import String
 
@@ -52,7 +53,7 @@ if __name__ == '__main__':
 				
 	while not ctrl_c:
 		connections = gripper_pub.get_num_connections()
-
+		
 		if connections > 0:
 			# Gripper
 			
@@ -60,17 +61,20 @@ if __name__ == '__main__':
 
 			gripper_pub.publish(command) # Reset gripper
 			
-			command = outputMsg.CModel_robot_output();
-			command.rACT = 1
-			command.rGTO = 1
-			command.rSP  = 255
-			command.rFR  = 150
-
-			gripper_pub.publish(command) # Activate gripper
 			ctrl_c = True
 			
 		else:
 			rospy.Rate(1).sleep()
+	
+	time.sleep(0.5)
+	command = outputMsg.CModel_robot_output();
+	command.rACT = 1
+	command.rGTO = 1
+	command.rSP  = 255
+	command.rFR  = 150
+
+	gripper_pub.publish(command) # Activate gripper
+			
 			
 	command.rSP  = 15
 
