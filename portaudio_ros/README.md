@@ -1,6 +1,6 @@
 # portaudio_ros
 
-```portaudio_ros.cpp``` reads data from the */pressure* topic and outputs the impulse response of an underdamped 2nd order 
+`portaudio_ros.cpp` reads data from the */pressure* topic and outputs the impulse response of an underdamped 2nd order 
 system every time it is in the state *grasping*. It starts in the *resting* state.
 
 It has a built-in state machine, that works as follows:
@@ -11,3 +11,8 @@ It has a built-in state machine, that works as follows:
     3. S2: *Holding* state. Reached automatically from S1, and remains in this state until the gripper opens (i.e. no sensor
        is detecting any pressure), in which case goes back to S0.
 
+This application can be launched by running:
+    
+    $ roslaunch portaudio_ros portaudio_ros.launch
+    
+It will run the portaudio node plus rosserial with the arduino code.
