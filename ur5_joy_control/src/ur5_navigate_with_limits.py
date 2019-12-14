@@ -32,6 +32,16 @@ def joyCallback(data):
 	axes[4:6] = 0.5-0.5*axes[4:6]
 	
 	buttons = np.array(data.buttons)	
+    
+def in_limits(curr_pos):
+    inside = False
+    for j in range(num_lims):
+        if (curr_pos.x>min_lims[j,0] and curr_pos.x<max_lims[j,0] and curr_pos.y>min_lims[j,1] and curr_pos.y<max_lims[j,1]\
+            and curr_pos.z>min_lims[j,2] and curr_pos.z<max_lims[j,2]:
+            inside = True
+            break
+            
+    return inside
 
 if __name__ == '__main__':	
 	
@@ -75,6 +85,8 @@ if __name__ == '__main__':
 		
 		num_lims = max_lims.shape[0]
 		total_count = 0
+        
+        inside = in_limits(curr_pos)
 		
 		for j in range(num_lims):
 			
