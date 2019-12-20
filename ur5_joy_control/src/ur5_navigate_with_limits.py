@@ -22,6 +22,8 @@ limits = np.array([[0.208, 0.719, 0.429],\
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
 
+force_lim = 5 # Limit of force allowed on wrist
+
 def joyCallback(data):
 	
 	global axes
@@ -31,64 +33,72 @@ def joyCallback(data):
 	axes[np.absolute(axes)<0.3] = 0.0
 	axes[4:6] = 0.5-0.5*axes[4:6]
 	
-	buttons = np.array(data.buttons)	
+	buttons = np.array(data.buttons)
+    
+def FTCallback(data):
+    # Stop robot if force on wrist is excessive
+    wrench = data.wrench
+    if wrench.force.x > force_lim or wrench.force.y > force_lim or wrench.force.z > force_lim:
+        pub.publish("stopl(1.0,5.0)")
     
 def in_limits(curr_pos):
     inside = False
     for j in range(num_lims):
         if (curr_pos.x>min_lims[j,0] and curr_pos.x<max_lims[j,0] and curr_pos.y>min_lims[j,1] and curr_pos.y<max_lims[j,1]\
-            and curr_pos.z>min_lims[j,2] and curr_pos.z<max_lims[j,2]:
+            and curr_pos.z>min_lims[j,2] and curr_pos.z<max_lims[j,2]):
             inside = True
             break
             
     return inside
 
 if __name__ == '__main__':	
-	
-	rospy.init_node('ur5_joy_node', anonymous=True)
-	
-	rate = rospy.Rate(100) # Hz
-	
-	sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
-	pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
-	
-	# Setup robot UR5
-	robot = moveit_commander.RobotCommander()
-	scene = moveit_commander.PlanningSceneInterface()
-	group_name = "manipulator"
-	group = moveit_commander.MoveGroupCommander(group_name)
-	
-	with open('ws.pkl','rb') as in_put:
-		ws = pickle.load(in_put)
-	
-	limits = np.concatenate((ws.BoxMax,ws.BoxMin),axis=0)
-	
-	# LIMITS:
-	max_lims = ws.BoxMax
-	min_lims = ws.BoxMin
-	
-	print 'Max limits: '
-	print max_lims
-	print 'Min limits: '
-	print min_lims, '\n'
+    
+    rospy.init_node('ur5_joy_node', anonymous=True)
 
-	while not rospy.is_shutdown():
-		
-		#print group.get_current_pose()
-		
-		
-		curr_pos = group.get_current_pose().pose.position
-		stop = False
-		count_x = 0
-		count_y = 0
-		count_z = 0
-		
-		num_lims = max_lims.shape[0]
-		total_count = 0
-        
+    rate = rospy.Rate(100) # Hz
+
+    sub = rospy.Subscriber("/joy", Joy, joyCallback, queue_size=1)
+    pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
+
+    force_sub = rospy.Subscriber("/FT_sensor/robotiq_force_torque_wrench", gm.WrenchStamped, FTCallback, queue_size=1) 
+
+    # Setup robot UR5
+    robot = moveit_commander.RobotCommander()
+    scene = moveit_commander.PlanningSceneInterface()
+    group_name = "manipulator"
+    group = moveit_commander.MoveGroupCommander(group_name)
+
+    with open('ws.pkl','rb') as in_put:
+        ws = pickle.load(in_put)
+
+    limits = np.concatenate((ws.BoxMax,ws.BoxMin),axis=0)
+
+    # LIMITS:
+    max_lims = ws.BoxMax
+    min_lims = ws.BoxMin
+    
+    print 'Max limits: '
+    print max_lims
+    print 'Min limits: '
+    print min_lims, '\n'
+
+    while not rospy.is_shutdown():
+
+        #print group.get_current_pose()
+
+
+        curr_pos = group.get_current_pose().pose.position
+        stop = False
+        count_x = 0
+        count_y = 0
+        count_z = 0
+
+        num_lims = max_lims.shape[0]
+        total_count = 0
+
         inside = in_limits(curr_pos)
-		
-		for j in range(num_lims):
+
+        for j in range(num_lims):
 			
 			temp_count = 0
 			
@@ -103,8 +113,8 @@ if __name__ == '__main__':
 		
 			print(temp_count)
 			total_count += temp_count/3
-			 
-		if total_count == num_lims:
-			pub.publish("stopl(1.0,5.0)")
+         
+        if total_count == num_lims:
+            pub.publish("stopl(1.0,5.0)")
 		
-		rate.sleep()
+        rate.sleep()
