@@ -15,10 +15,6 @@ from moveit_commander.conversions import pose_to_list
 import numpy as np
 from set_ur5_limits import Workspace
 
-
-limits = np.array([[0.208, 0.719, 0.429],\
-					[-0.220, 0.403, 0.237]])
-
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
 
@@ -97,7 +93,13 @@ if __name__ == '__main__':
         total_count = 0
 
         inside = in_limits(curr_pos)
-
+        
+        if inside:
+            # Not stopping robot
+            rate.sleep()
+            continue
+        
+        # NOT WORKING YET:
         for j in range(num_lims):
 			
 			temp_count = 0
