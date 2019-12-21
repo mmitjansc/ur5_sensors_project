@@ -20,6 +20,9 @@ buttons = np.zeros((11,))
 
 force_lim = 5 # Limit of force allowed on wrist
 
+limits = np.array([[0.208, 0.719, 0.429],\
+					[-0.220, 0.403, 0.237]])
+
 def joyCallback(data):
 	
 	global axes
