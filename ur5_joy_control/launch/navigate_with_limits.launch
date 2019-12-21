@@ -1,13 +1,7 @@
 <launch>	
 	
-	<rosparam param="joy_node/dev">"/dev/input/js4"</rosparam>
+	<include file="$(find ur5_joy_control)/launch/navigate.launch"/>
 	
-	<node pkg="joy" name="joy_node" type="joy_node" output="screen" required="true"/>
-
-	<node pkg="ur5_joy_control" name="gripper_server" type="gripper_server.py" output="screen" required="true"/>
-	
-	<node pkg="ur5_joy_control" name="ur5_py_control" type="ur5_py_control.py" output="screen" required="true"/>
-
 	<node pkg="ur5_joy_control" name="ur5_navigate_with_limits" type="ur5_navigate_with_limits.py" output="screen" required="true"/>
 
 </launch>
