@@ -16,12 +16,11 @@ import numpy as np
 
 class Workspace:
     def __init__(self):
-        self.Boxes = np.zeros((4,3))
-        self.heights = np.array([0])
-        pass
+        self.Boxes = np.zeros((1,4,3))
+        self.heights = np.zeros((1,))
         
     def addBox(self):
-        global box_coord
+
         global save_coord
         global finish_box
         
@@ -30,7 +29,7 @@ class Workspace:
         pos_init = moveit_commander.MoveGroupCommander('manipulator').get_current_pose().pose.position
         
         # Boxes will be described in a 3D array, 3rd dimension corresponding to box. 1st dimension are points, 2n are point coordinates
-        current_box = np.zeros((4,3))
+        current_box = np.zeros((1,4,3))
         
         min_box = np.array([pos_init.x, pos_init.y, pos_init.z])
         max_box = np.array([pos_init.x, pos_init.y, pos_init.z])
@@ -56,29 +55,28 @@ class Workspace:
                 # Every time button Y is pressed, a new point is added to the current box
                 print "Saving coordinate %d!" %(box_coord)
                 if box_coord == 4:
-                    height = np.array(z)
+                    height = z
                     finish_box = True
                 else:
-                    current_box[box_coord,:] = np.array([x,y,z])
+                    current_box[0,box_coord,:] = np.array([x,y,z])
                     box_coord += 1
                 save_coord = False           
         
         if finish_ws:
-            self.Boxes = self.Boxes[:,:,1:]
+            self.Boxes = self.Boxes[1:,:,:]
             self.heights = self.heights[1:]
             return
         
         try:
             self.BoxMin = np.concatenate((self.BoxMin,min_box[np.newaxis,:]),axis=0)
             self.BoxMax = np.concatenate((self.BoxMax,max_box[np.newaxis,:]),axis=0)
-            print self.BoxMin
         except:
             self.BoxMin = min_box[np.newaxis,:]
             self.BoxMax = max_box[np.newaxis,:]
         
         
-        self.Boxes = np.concatenate((self.Boxes,current_box), axis=2)
-        self.heights = np.concatenate((self.heights,height))
+        self.Boxes = np.concatenate((self.Boxes,current_box), axis=0)
+        self.heights = np.concatenate((self.heights,height), axis=None)
         
         print "Box added!"
         
@@ -129,5 +127,4 @@ if __name__ == '__main__':
         pickle.dump(ws,output,pickle.HIGHEST_PROTOCOL)
     
     print 'Limits saved!'
-    print ws.BoxMax
-    print ws.BoxMin
+
