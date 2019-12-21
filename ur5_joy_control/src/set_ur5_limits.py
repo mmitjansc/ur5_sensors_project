@@ -54,6 +54,7 @@ class Workspace:
                 
             if save_coord:
                 # Every time button Y is pressed, a new point is added to the current box
+                print "Saving coordinate %d!" %(box_coord)
                 if box_coord == 4:
                     height = np.array(z)
                     finish_box = True
@@ -79,7 +80,7 @@ class Workspace:
         self.Boxes = np.concatenate((self.Boxes,current_box), axis=2)
         self.heights = np.concatenate((self.heights,height))
         
-        print "Box added"
+        print "Box added!"
         
 def joyCallback(data):
     
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     
     while not finish_ws:
         c = raw_input('Press enter to add new box') 
-        print('Adding box... Press "Y" to save box point, or "X" to finish setting boxes.')
+        print 'Saving box... Press "Y" to save box point, or "X" to finish last boxes.' 
         finish_box = False
         ws.addBox()
         
