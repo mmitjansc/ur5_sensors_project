@@ -8,6 +8,9 @@ import moveit_msgs.msg
 import geometry_msgs.msg as gm
 import pickle
 
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 from math import pi
 from std_msgs.msg import String
 from sensor_msgs.msg import Joy
@@ -38,18 +41,21 @@ def FTCallback(data):
     # Stop robot if force on wrist is excessive
     wrench = data.wrench
     if wrench.force.x > force_lim or wrench.force.y > force_lim or wrench.force.z > force_lim:
-        pub.publish("stopl(1.0,5.0)")
+        invert_velocity()
+
+def invert_velocity():
+    scale_pos = 0.4 # Go back with double the speed
+    scale_or = 0.8
     
-def in_limits(curr_pos):
-    # Wrong algorithm, adapt to irregular quadrilaterals
-    inside = False
-    for j in range(num_lims):
-        if (curr_pos.x>min_lims[j,0] and curr_pos.x<max_lims[j,0] and curr_pos.y>min_lims[j,1] and curr_pos.y<max_lims[j,1]\
-            and curr_pos.z>min_lims[j,2] and curr_pos.z<max_lims[j,2]):
-            inside = True
-            break
-            
-    return inside
+    height = 0.0
+	if buttons[4] > 0:
+		height = -1.0
+	if buttons[5] > 0:
+		height = 1.0	
+    
+    pub.publish("speedl([-%f,%f,-%f,0,0,0], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
+        scale_pos*height))
+	
 
 if __name__ == '__main__':	
     
@@ -71,66 +77,30 @@ if __name__ == '__main__':
     with open('ws.pkl','rb') as in_put:
         ws = pickle.load(in_put)
 
-    limits = np.concatenate((ws.BoxMax,ws.BoxMin),axis=0)
-
     # LIMITS:
-    max_lims = ws.BoxMax
-    min_lims = ws.BoxMin
+    boxes = ws.Boxes
+    heights = ws.heights
+    polygons = [Polygon(boxes[k,:,:2]) for k in range(boxes.shape[0])]
     
-    print 'Max limits: '
-    print max_lims
-    print 'Min limits: '
-    print min_lims, '\n'
+    print("Boxes: ",boxes)
+    print("heights: ",heights)
 
     while not rospy.is_shutdown():
 
-        #print group.get_current_pose()
-
-
         curr_pos = group.get_current_pose().pose.position
-        stop = False
-        count_x = 0
-        count_y = 0
-        count_z = 0
 
-        num_lims = max_lims.shape[0]
-        total_count = 0
-
-        inside = in_limits(curr_pos)
+        point = Point(curr_pos.x, curr_pos.y, curr_pos.z)
         
-        if inside:
-            # Not stopping robot
-            rate.sleep()
-            continue
+        inside = False
+        for i in range(boxes.shape[0]):
+            z_min = boxes[i,0,-1]
+            z_max = heights[i]
+            if polygons[i].contains(point) and z_min < p[2] and p[2] < z_max:
+                inside = True
         
-        else:
-            # -> Find which box is the robot in
-            # -> Find closest point in that box
-            # -> new_vel = dot(current_pos, closest_point)
-            # -> Publish new_vel
-            
-            
-        # NOT WORKING YET:
-        '''
-        for j in range(num_lims):
-			
-			temp_count = 0
-			
-			if (curr_pos.x<min_lims[j,0] and axes[0]>0) or (curr_pos.x>max_lims[j,0] and axes[0]<0):
-				temp_count += 1
-				
-			if (curr_pos.y<min_lims[j,1] and axes[1]<0) or (curr_pos.y>max_lims[j,1] and axes[1]>0):
-				temp_count += 1
-				
-			if (curr_pos.z<min_lims[j,2] and buttons[4]>0) or (curr_pos.z>max_lims[j,2] and buttons[5]>0):
-				temp_count += 1
-		
-			print(temp_count)
-			total_count += temp_count/3
-         
-        if total_count == num_lims:
-            pub.publish("stopl(1.0,5.0)")
-		'''
-        
+        if not inside:
+            # Switch velocity input to keep EE within boundaries:
+            invert_velocity()
+    
         
         rate.sleep()

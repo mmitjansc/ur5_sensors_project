@@ -49,7 +49,7 @@ t = 0
 T = 0.05 # 50ms
 n = 0
 
-while t < 1000*T:
+while t < 500*T:
     
     if n > 10:
         n = 0
@@ -57,7 +57,7 @@ while t < 1000*T:
         v = (2*np.random.rand(3)-1)/100*10
         
     p = p + v 
-    point = Point(p[0],p[1])
+    point = Point(p[0],p[1],p[2])
     
     inside = False
     for i in range(boxes.shape[0]):
@@ -70,6 +70,8 @@ while t < 1000*T:
     
     if not inside:
         p = p - 2*v
+        n = 0
+        v = (2*np.random.rand(3)-1)/100*10
         ax.plot3D([p[0]],[p[1]],[p[2]],'*b')   
         
     else:
