@@ -24,10 +24,10 @@ buttons = np.zeros((11,))
 force_lim = 5 # Limit of force allowed on wrist
 
 limits = np.array([[0.208, 0.719, 0.429],\
-					[-0.220, 0.403, 0.237]])
+                    [-0.220, 0.403, 0.237]])
 
 def joyCallback(data):
-	
+    
     global axes
     global buttons
 
@@ -51,13 +51,13 @@ def invert_velocity():
     if buttons[4] > 0:
         height = -1.0
     if buttons[5] > 0:
-        height = 1.0	
+        height = 1.0    
 
     pub.publish("speedl([-%f,%f,-%f,0,0,0], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
         scale_pos*height))
-	
+    
 
-if __name__ == '__main__':	
+if __name__ == '__main__':  
     
     rospy.init_node('ur5_joy_node', anonymous=True)
 
