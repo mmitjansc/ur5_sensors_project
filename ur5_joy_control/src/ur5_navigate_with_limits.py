@@ -41,6 +41,7 @@ def FTCallback(data):
         pub.publish("stopl(1.0,5.0)")
     
 def in_limits(curr_pos):
+    # Wrong algorithm, adapt to irregular quadrilaterals
     inside = False
     for j in range(num_lims):
         if (curr_pos.x>min_lims[j,0] and curr_pos.x<max_lims[j,0] and curr_pos.y>min_lims[j,1] and curr_pos.y<max_lims[j,1]\
@@ -102,7 +103,15 @@ if __name__ == '__main__':
             rate.sleep()
             continue
         
+        else:
+            # -> Find which box is the robot in
+            # -> Find closest point in that box
+            # -> new_vel = dot(current_pos, closest_point)
+            # -> Publish new_vel
+            
+            
         # NOT WORKING YET:
+        '''
         for j in range(num_lims):
 			
 			temp_count = 0
@@ -121,5 +130,7 @@ if __name__ == '__main__':
          
         if total_count == num_lims:
             pub.publish("stopl(1.0,5.0)")
-		
+		'''
+        
+        
         rate.sleep()

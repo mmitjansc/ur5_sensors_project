@@ -13,3 +13,10 @@ ylim([-total_lim,total_lim])
 x = -total_lim:0.1:total_lim;
 y = x;
 [u,v] = meshgrid(x,y);
+
+
+
+L = linspace(0,2*pi,5);
+xv = cos(L)';
+yv = sin(L)';
+in = inpolygon(0,0,xv,yv)
