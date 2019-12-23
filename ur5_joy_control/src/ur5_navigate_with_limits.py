@@ -28,14 +28,14 @@ limits = np.array([[0.208, 0.719, 0.429],\
 
 def joyCallback(data):
 	
-	global axes
-	global buttons
-	
-	axes = np.array(data.axes)
-	axes[np.absolute(axes)<0.3] = 0.0
-	axes[4:6] = 0.5-0.5*axes[4:6]
-	
-	buttons = np.array(data.buttons)
+    global axes
+    global buttons
+
+    axes = np.array(data.axes)
+    axes[np.absolute(axes)<0.3] = 0.0
+    axes[4:6] = 0.5-0.5*axes[4:6]
+
+    buttons = np.array(data.buttons)
     
 def FTCallback(data):
     # Stop robot if force on wrist is excessive
@@ -46,13 +46,13 @@ def FTCallback(data):
 def invert_velocity():
     scale_pos = 0.4 # Go back with double the speed
     scale_or = 0.8
-    
+
     height = 0.0
-	if buttons[4] > 0:
-		height = -1.0
-	if buttons[5] > 0:
-		height = 1.0	
-    
+    if buttons[4] > 0:
+        height = -1.0
+    if buttons[5] > 0:
+        height = 1.0	
+
     pub.publish("speedl([-%f,%f,-%f,0,0,0], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
         scale_pos*height))
 	
