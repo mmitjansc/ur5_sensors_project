@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-import copy
 import rospy
 import moveit_commander
 import moveit_msgs.msg
@@ -28,11 +26,9 @@ class Workspace:
         
         pos_init = group.get_current_pose().pose.position
         
-        # Boxes will be described in a 3D array, 3rd dimension corresponding to box. 2nd dimension are points, 3rd are point coordinates
+        # Boxes will be described in a 3D array, 1st dimension corresponding to box. 
+        # 2nd dimension are points, 3rd are point coordinates
         current_box = np.zeros((1,4,3))
-        
-        min_box = np.array([pos_init.x, pos_init.y, pos_init.z])
-        max_box = np.array([pos_init.x, pos_init.y, pos_init.z])
         
         while not finish_box and not finish_ws:
             x,y,z = (group.get_current_pose().pose.position.x, group.get_current_pose().pose.position.y, group.get_current_pose().pose.position.z)

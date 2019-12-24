@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-import copy
 import rospy
 import moveit_commander
 import moveit_msgs.msg
@@ -69,7 +67,6 @@ def joyCallback(data):
 	if buttons[5] > 0:
 		height = 1.0	
 	
-    # Idea: Publish to another topic: Then, navigate_with_limits read this topic and publishes to real robot
 	pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
 		scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
 		
@@ -95,8 +92,6 @@ def joyCallback(data):
 	
 	else:
 		gripper_client(0)
-		
-		
 		
 	if buttons[7] > 0:
 		pub.publish("powerdown()")
