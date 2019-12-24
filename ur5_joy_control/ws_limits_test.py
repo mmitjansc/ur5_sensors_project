@@ -65,10 +65,12 @@ while t < 500*T:
         z_max = z_min + heights[i]
         if polygons[i].contains(point) and z_min < p[2] and p[2] < z_max:
             inside = True
+            break
             
     #print(inside)
     
     if not inside:
+        print(inside)
         p = p - 2*v
         n = 0
         v = (2*np.random.rand(3)-1)/100*10

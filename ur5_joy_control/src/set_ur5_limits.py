@@ -36,20 +36,6 @@ class Workspace:
         
         while not finish_box and not finish_ws:
             x,y,z = (group.get_current_pose().pose.position.x, group.get_current_pose().pose.position.y, group.get_current_pose().pose.position.z)
-            
-            if x < min_box[0]:
-                min_box[0] = x
-            elif x > max_box[0]:
-                max_box[0] = x
-            if y < min_box[1]:
-                min_box[1] = y
-            elif y > max_box[1]:
-                max_box[1] = y
-            if z < min_box[2]:
-                min_box[2] = z
-            elif z > max_box[2]:
-                max_box[2] = z
-                
                 
             if save_coord:
                 # Every time button Y is pressed, a new point is added to the current box
@@ -66,15 +52,7 @@ class Workspace:
             self.Boxes = self.Boxes[1:,:,:]
             self.heights = self.heights[1:]
             return
-        
-        try:
-            self.BoxMin = np.concatenate((self.BoxMin,min_box[np.newaxis,:]),axis=0)
-            self.BoxMax = np.concatenate((self.BoxMax,max_box[np.newaxis,:]),axis=0)
-        except:
-            self.BoxMin = min_box[np.newaxis,:]
-            self.BoxMax = max_box[np.newaxis,:]
-        
-        
+
         self.Boxes = np.concatenate((self.Boxes,current_box), axis=0)
         self.heights = np.concatenate((self.heights,height), axis=None)
         
