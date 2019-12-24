@@ -20,7 +20,6 @@ boxes = np.concatenate((boxes,nbox),axis=0)
 print("Boxes: ")
 print(boxes)
 
-
 ax = plt.axes(projection='3d')
 
 

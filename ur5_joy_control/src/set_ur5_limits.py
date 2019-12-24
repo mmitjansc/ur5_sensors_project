@@ -26,7 +26,7 @@ class Workspace:
         
         box_coord = 0
         
-        pos_init = moveit_commander.MoveGroupCommander('manipulator').get_current_pose().pose.position
+        pos_init = group.get_current_pose().pose.position
         
         # Boxes will be described in a 3D array, 3rd dimension corresponding to box. 2nd dimension are points, 3rd are point coordinates
         current_box = np.zeros((1,4,3))
