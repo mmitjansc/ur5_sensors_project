@@ -5,6 +5,7 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg as gm
 import pickle
+import os
 
 from math import pi
 from std_msgs.msg import String
@@ -62,6 +63,7 @@ def joyCallback(data):
     buttons = np.array(data.buttons)    
     
     if buttons[3] > 0:
+        print 'Save coord!'    
         save_coord = True       
         
     if buttons[2] > 0:
@@ -90,7 +92,7 @@ if __name__ == '__main__':
     
     while not finish_ws:
         c = raw_input('Press enter to add new box') 
-        print 'Saving box... Press "Y" to save box point, or "X" to finish last boxes.' 
+        print 'Press "Y" to save box point, or "X" to finish last boxes.' 
         finish_box = False
         ws.addBox()
         
@@ -98,6 +100,7 @@ if __name__ == '__main__':
     print "Workspace created!"
     
     with open('ws.pkl','wb') as output:
+        print os.getcwd()
         pickle.dump(ws,output,pickle.HIGHEST_PROTOCOL)
     
     print 'Limits saved!'
