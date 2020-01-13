@@ -61,18 +61,16 @@ def joyCallback(data):
     scale_or = 0.8
     #print(axes)
 
-    height = 0.0
-    if buttons[4] > 0:
-        height = -1.0
-    if buttons[5] > 0:
-        height = 1.0    
+    height = buttons[5] - buttons[4] 
     
     if not recovering:
+        #print("Recovering: %r, PUBLISHING"%(recovering))
         pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
             scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
     
     else:
-        print "RECOVERING, can't publish"        
+        pass
+        #print "RECOVERING, can't publish"        
             
     stop = True
     for ax in np.absolute(axes[0:6]):
@@ -100,9 +98,10 @@ def joyCallback(data):
     if buttons[7] > 0:
         pub.publish("powerdown()")
 
-def insideCallback(msg):
-    global inside    
+def insideCallback(msg): 
+    global recovering 
     recovering = msg.data
+    #rospy.logerr(recovering)
         
 if __name__ == '__main__':  
 
