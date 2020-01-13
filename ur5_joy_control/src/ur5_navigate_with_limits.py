@@ -92,6 +92,10 @@ if __name__ == '__main__':
     first_time = True
 
     while not rospy.is_shutdown():
+        
+        if first_time:
+            recov_axes = axes
+            recov_height = height
 
         curr_pos = group.get_current_pose().pose.position
         curr_or = group.get_current_pose().pose.orientation
@@ -128,8 +132,6 @@ if __name__ == '__main__':
                     height = -1.0
                 if buttons[5] > 0:
                     height = 1.0   
-                recov_axes = axes
-                recov_height = height
                 first_time = False
             recovering = True
             print (first_time, recov_axes, recov_height)
