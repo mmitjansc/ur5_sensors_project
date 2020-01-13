@@ -141,18 +141,12 @@ if __name__ == '__main__':
                 rospy.logwarn('NOT INSIDE! Recovering')       
                 
                 pub.publish("stopl(5.0, 5.0)")  
+                
                 pol_ext = LinearRing(closest_poly.exterior.coords)
                 a = pol_ext.project(point)
                 b = pol_ext.interpolate(a)
                 closest_point_coords = list(b.coords)[0]
-                #print closest_point_coords
-                roll,pitch,yaw = euler_from_quaternion([curr_or.x,curr_or.y,curr_or.z,curr_or.w])
-                print "Moving to closest point"
-
-                #pub.publish("movel([%f,%f,%f,%f,%f,%f])"%(closest_point_coords[0],closest_point_coords[1],z,roll,pitch,yaw))
-                x_goal,y_goal,z_goal = x,y,z
-                #print(closest_point_coords[0],closest_point_coords[1])
-                #print(x,y)
+                
                 time.sleep(0.3)
                 waypoints = []
                 #print(group.get_joints())

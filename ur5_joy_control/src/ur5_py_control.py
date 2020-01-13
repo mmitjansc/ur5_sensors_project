@@ -16,10 +16,6 @@ import numpy as np
 import actionlib
 import ur5_joy_control.msg
 
-
-limits = np.array([[0.208, 0.719, 0.429],\
-                    [-0.220, 0.403, 0.237]])
-
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
 
@@ -78,7 +74,7 @@ def joyCallback(data):
             stop = False
             break
     
-    if stop and buttons[5]<1 and buttons[4]<1:
+    if stop and buttons[5]<1 and buttons[4]<1 and not recovering:
         pub.publish("stopl(5.0, 5.0)")
         
     # Gripper control:
