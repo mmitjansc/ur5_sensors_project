@@ -5,7 +5,7 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg as gm
 import pickle
-import os
+import time
 
 from math import pi
 from std_msgs.msg import String
@@ -36,14 +36,17 @@ class Workspace:
                 
             if save_coord:
                 # Every time button Y is pressed, a new point is added to the current box
-                print "Saving coordinate %d!" %(box_coord)
+                
                 if box_coord == 4:
+                    print "Saving height!"
                     height = z
                     finish_box = True
                 else:
+                    print "Saving coordinate %d!" %(box_coord)
                     current_box[0,box_coord,:] = np.array([x,y,z])
                     box_coord += 1
-                save_coord = False           
+                save_coord = False    
+                time.sleep(0.5)          
         
         if finish_ws:
             self.Boxes = self.Boxes[1:,:,:]
@@ -59,13 +62,18 @@ def joyCallback(data):
     
     global save_coord
     global finish_ws
+    global restart_button
     
     buttons = np.array(data.buttons)    
     
-    if buttons[3] > 0:
-        print 'Save coord!'    
-        save_coord = True       
+    if buttons[3] > 0 and restart_button:
+        #print 'Save coord!'    
+        save_coord = True
+        restart_button = False
         
+    if buttons[3] < 1:
+        restart_button = True
+            
     if buttons[2] > 0:
         finish_ws = True
         
@@ -87,8 +95,10 @@ if __name__ == '__main__':
     finish_ws = False
     save_coord = False
 
-    print 'waiting for limits...'
+    time.sleep(0.5)
     ws = Workspace()
+    
+    restart_button = True
     
     while not finish_ws:
         c = raw_input('Press enter to add new box') 
@@ -100,7 +110,6 @@ if __name__ == '__main__':
     print "Workspace created!"
     
     with open('ws.pkl','wb') as output:
-        print os.getcwd()
         pickle.dump(ws,output,pickle.HIGHEST_PROTOCOL)
     
     print 'Limits saved!'
