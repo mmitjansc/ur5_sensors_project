@@ -43,19 +43,6 @@ def FTCallback(data):
         pass
         #invert_velocity()
 
-def invert_velocity(axes,height):
-    
-    scale_pos = 0.2 # Go back with double the speed
-    scale_or = 0.8     
-    #print(axes,height)
-    pub.publish("speedl([-%f,%f,-%f,0,0,0], 1., 100.0,3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
-        scale_pos*height))
-        
-    '''    
-    time.sleep(0.2)
-    pub.publish("stopl(5.0,5.0)")
-    '''
-
 if __name__ == '__main__':  
     
     rospy.init_node('ur5_joy_node', anonymous=True)
@@ -135,7 +122,7 @@ if __name__ == '__main__':
         
         
         if not inside:
-            # Switch velocity input to keep EE within ws boundaries:
+            # Switch velocity input to keep EE within ws boundaries
             recovering = True
             inside_pub.publish(recovering)
             
@@ -172,26 +159,8 @@ if __name__ == '__main__':
                 speed_vec /= 10*(np.linalg.norm(speed_vec))                
                 print(np.linalg.norm(speed_vec))
                 
-                '''
-                print(np.array(closest_point_coords))
-                wpose.position.x = closest_point_coords[0]
-                wpose.position.y = closest_point_coords[1]
-                wpose.position.z = z_goal
-                waypoints.append(copy.deepcopy(wpose))
-                plan,fraction = group.compute_cartesian_path(waypoints,0.01,0.0)
-                #print(group.get_current_joint_values())
-                group.execute(plan,wait=True)
-                #print "REACHED"
-                #group.set_position_target([closest_point_coords[0],closest_point_coords[1],z])
-                '''
-                
                 pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
                 
-                first_time = False     
-                
-            
-            #invert_velocity(recov_axes, recov_height)
-            
-        
+                first_time = False       
         
         rate.sleep()
