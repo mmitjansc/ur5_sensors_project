@@ -88,8 +88,6 @@ if __name__ == '__main__':
         curr_pos = group.get_current_pose().pose.position
 
         z = curr_pos.z
-        x = curr_pos.x
-        y = curr_pos.y
             
         point = Point(curr_pos.x, curr_pos.y)            
         
@@ -97,6 +95,7 @@ if __name__ == '__main__':
         closest_poly_idx = 0
         dist = float('inf')
         for i in range(boxes.shape[0]):
+
             z_min = boxes[i,0,-1]
             z_max = heights[i]
             
@@ -143,7 +142,7 @@ if __name__ == '__main__':
                 z = wpose.position.z
                 z_goal = z
 
-                curr_pos = np.array([wpose.position.x,wpose.position.y,wpose.position.z])
+                curr_pos = np.array([wpose.position.x,wpose.position.y,z])
                 
                 if (z_min > z or z > z_max):
                     if z < z_min:
