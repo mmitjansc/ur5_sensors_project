@@ -69,7 +69,7 @@ if __name__ == '__main__':
     boxes = ws.Boxes
     heights = ws.heights
     polygons = [Polygon(boxes[k,:,:2]) for k in range(boxes.shape[0])]
-    eroded_polys = [Polygon(boxes[k,:,:2]).buffer(-0.02) for k in range(boxes.shape[0])]
+    eroded_polys = [Polygon(boxes[k,:,:2]).buffer(-0.01) for k in range(boxes.shape[0])]
     
     print("Boxes: ",boxes)
     print("heights: ",heights)
@@ -134,7 +134,7 @@ if __name__ == '__main__':
             if first_time:    
                         
                 #print(axes,height)
-                rospy.logwarn('NOT INSIDE! Recovering')       
+                rospy.logwarn('OUT OF LIMITS. Recovering')       
                 
                 pub.publish("stopl(5.0, 5.0)")  
                 wpose = group.get_current_pose().pose
@@ -146,9 +146,9 @@ if __name__ == '__main__':
                 
                 if (z_min > z or z > z_max):
                     if z < z_min:
-                        z_goal = z_min+0.02
+                        z_goal = z_min+0.01
                     elif z > z_max:
-                        z_goal = z_max-0.02
+                        z_goal = z_max-0.01
                     closest_point_coords = np.array([wpose.position.x, wpose.position.y, z_goal])
                     
                 if  polygons[closest_poly_idx].distance(point) > 1e-8:                
