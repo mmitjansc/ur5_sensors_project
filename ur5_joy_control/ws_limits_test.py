@@ -20,6 +20,10 @@ boxes = np.concatenate((boxes,nbox),axis=0)
 print("Boxes: ")
 print(boxes)
 
+pol = Polygon([[0,0],[1,0],[1,1],[0,1]])
+p = Point(0.5,0.5)
+print("Distance: %f"%(pol.distance(p)))
+
 ax = plt.axes(projection='3d')
 
 

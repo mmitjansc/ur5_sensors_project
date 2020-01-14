@@ -125,8 +125,10 @@ if __name__ == '__main__':
                     inside_pub.publish(recovering)
                 break
             
-            d = eroded_polys[i].distance(point)    
-            if z_min < z and z < z_max and d < dist:                
+            d = polygons[i].distance(point)
+            if (z_min > z or z > z_max) and d < 1e-8:
+                d = min(abs(z-z_min),abs(z-z_max))
+            if d < dist:                
                 closest_poly = eroded_polys[i]
                 dist = d 
                       
@@ -136,33 +138,54 @@ if __name__ == '__main__':
             # Switch velocity input to keep EE within ws boundaries:
             recovering = True
             inside_pub.publish(recovering)
+            
             if first_time:    
+                        
                 print(axes,height)
                 rospy.logwarn('NOT INSIDE! Recovering')       
                 
                 pub.publish("stopl(5.0, 5.0)")  
-                
-                pol_ext = LinearRing(closest_poly.exterior.coords)
-                a = pol_ext.project(point)
-                b = pol_ext.interpolate(a)
-                closest_point_coords = list(b.coords)[0]
-                
-                time.sleep(0.3)
-                waypoints = []
-                #print(group.get_joints())
-                #print(group.get_current_joint_values())
                 wpose = group.get_current_pose().pose
+                waypoints = []
                 waypoints.append(copy.deepcopy(wpose))
+                
+                curr_pos = np.array([wpose.position.x,wpose.position.y,wpose.position.z])
+                
+                if (z_min > z or z > z_max) and polygons[i].distance(point) < 1e-8:
+                    if z < z_min:
+                        z_goal = z_min+0.02
+                    elif z > z_max:
+                        z_goal = z_max-0.02
+                    closest_point_coords = np.array([wpose.position.x, wpose.position.y, z_goal])
+                    
+                else:                
+                    pol_ext = LinearRing(closest_poly.exterior.coords)
+                    a = pol_ext.project(point)
+                    b = pol_ext.interpolate(a)
+                    closest_point_coords = list(b.coords)[0]
+                    z_goal= wpose.position.z
+                    closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
+                
+                time.sleep(0.1)
+                
+                speed_vec = closest_point_coords - curr_pos
+                speed_vec /= 10*(np.linalg.norm(speed_vec))                
+                print(np.linalg.norm(speed_vec))
+                
+                '''
+                print(np.array(closest_point_coords))
                 wpose.position.x = closest_point_coords[0]
                 wpose.position.y = closest_point_coords[1]
+                wpose.position.z = z_goal
                 waypoints.append(copy.deepcopy(wpose))
                 plan,fraction = group.compute_cartesian_path(waypoints,0.01,0.0)
                 #print(group.get_current_joint_values())
                 group.execute(plan,wait=True)
                 #print "REACHED"
                 #group.set_position_target([closest_point_coords[0],closest_point_coords[1],z])
-
+                '''
                 
+                pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
                 
                 first_time = False     
                 
