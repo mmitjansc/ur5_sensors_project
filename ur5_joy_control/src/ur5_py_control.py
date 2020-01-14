@@ -18,6 +18,8 @@ import ur5_joy_control.msg
 
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
+first_time_4 = True
+first_time_5 = True
 
 def gripper_client(order):
     
@@ -45,11 +47,25 @@ def joyCallback(data):
     
     global axes
     global buttons
+    global first_time_4
+    global first_time_5
 
     gripper_val = 0
     
     axes = np.array(data.axes)
     axes[np.absolute(axes)<0.3] = 0.0
+    
+    if first_time_4:
+        if int(axes[4]) != 0:
+            first_time_4 = False        
+        else:
+            axes[4] = 1.0
+    if first_time_5:
+        if int(axes[5]) != 0:
+            first_time_5 = False        
+        else:
+            axes[5] = 1.0
+            
     axes[4:6] = 0.5-0.5*axes[4:6]
     
     buttons = np.array(data.buttons)    
@@ -75,7 +91,7 @@ def joyCallback(data):
             break
     
     if stop and buttons[5]<1 and buttons[4]<1 and not recovering:
-        pub.publish("stopl(5.0, 5.0)")
+        pub.publish("stopl(1.0, 5.0)")
         
     # Gripper control:
     if buttons[0] > 0:

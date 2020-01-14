@@ -201,12 +201,12 @@ public:
         return (err == paNoError);
     }
     
-    void IRCallback(const std_msgs::Int16::ConstPtr& msg) {
+    void IRCallback(const std_msgs::Int16::ConstPtr& msg) {        
 		
 		int sensor_val = msg->data;
 		
 		
-		if (sensor_val > 1000 && found_object == false) {
+		if (sensor_val > 8000 && found_object == false) {
 			j = 0;
 			
 			found_object = true;
@@ -231,7 +231,7 @@ public:
 			}
 		}
 		
-		else if (sensor_val < 1000) {
+		else if (sensor_val < 800) {
 			found_object = false;
 		}
 	}
@@ -244,7 +244,7 @@ public:
 		
 		for (int i=0;i < dat.data.size(); i++) {
 			
-			if (dat.data[i] < 200) {
+			if (dat.data[i] < 300) {
 				input = true;
 			}
 		}
@@ -352,20 +352,6 @@ private:
             if (j < LENGTH) {
 				j++;
 			}
-            
-            /*
-            auto t2 = std::chrono::high_resolution_clock::now();
-            
-            auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
-            
-            ts.tv_nsec = (long) std::max((150. - duration), 1.);
-            int f = nanosleep(&ts,(struct timespec *)NULL); // Sleep for X nanoseconds
-            
-            auto t3 = std::chrono::high_resolution_clock::now();
-			auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>( t3 - t1 ).count();
-			if (f < 0.) {
-				std::cout << "Loop duration: " << ts.tv_nsec << " ns\n";
-			}*/
         }
 
         return paContinue;
