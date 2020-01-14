@@ -134,7 +134,7 @@ if __name__ == '__main__':
             
             if first_time:    
                         
-                print(axes,height)
+                #print(axes,height)
                 rospy.logwarn('NOT INSIDE! Recovering')       
                 
                 pub.publish("stopl(5.0, 5.0)")  
@@ -163,7 +163,7 @@ if __name__ == '__main__':
                 
                 speed_vec = closest_point_coords - curr_pos
                 speed_vec /= 10*(np.linalg.norm(speed_vec))                
-                print(np.linalg.norm(speed_vec))
+                #print(np.linalg.norm(speed_vec))
                 
                 pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
                 
