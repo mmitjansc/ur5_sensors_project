@@ -15,8 +15,8 @@ function, run the following file:
 
 	$ roslaunch ur5_joy_control set_limits.launch
 	
-By following the instructions on the screen, you can move the robot to the *max* and *min* values of
-X, Y and Z for each box. Then, to control the robot with the set workspace, launch the following
-file:
+By following the instructions on the screen, move the robot to the 4 positions of the base of each workspace box, and then set the hight of the box. Repeat this for as many boxes as needed. 
+
+Then, to control the robot with the set workspace, launch the following file:
 
 	$ roslaunch ur5_joy_control navigate_with_limits.launch
