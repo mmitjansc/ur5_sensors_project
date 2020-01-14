@@ -20,5 +20,3 @@ X, Y and Z for each box. Then, to control the robot with the set workspace, laun
 file:
 
 	$ roslaunch ur5_joy_control navigate_with_limits.launch
-
-The above file, however, is still under construction.
