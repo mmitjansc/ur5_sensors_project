@@ -86,7 +86,7 @@ if __name__ == '__main__':
             recov_height = height
 
         curr_pos = group.get_current_pose().pose.position
-        curr_or = group.get_current_pose().pose.orientation
+
         z = curr_pos.z
         x = curr_pos.x
         y = curr_pos.y
@@ -107,7 +107,6 @@ if __name__ == '__main__':
                     first_time = True
                     print 'RECOVERED'
                     curr_pos = group.get_current_pose().pose.position
-                    #print [curr_pos.x - x_goal, curr_pos.y - y_goal, curr_pos.z - z_goal]
                     recovering = False
                     inside_pub.publish(recovering)
                 break
@@ -133,9 +132,7 @@ if __name__ == '__main__':
                 
                 pub.publish("stopl(5.0, 5.0)")  
                 wpose = group.get_current_pose().pose
-                waypoints = []
-                waypoints.append(copy.deepcopy(wpose))
-                
+
                 curr_pos = np.array([wpose.position.x,wpose.position.y,wpose.position.z])
                 
                 if (z_min > z or z > z_max) and polygons[i].distance(point) < 1e-8:
@@ -150,7 +147,7 @@ if __name__ == '__main__':
                     a = pol_ext.project(point)
                     b = pol_ext.interpolate(a)
                     closest_point_coords = list(b.coords)[0]
-                    z_goal= wpose.position.z
+                    z_goal = wpose.position.z
                     closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
                 
                 time.sleep(0.1)

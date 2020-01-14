@@ -25,7 +25,6 @@ def gripper_client(order):
     
     client = actionlib.SimpleActionClient('gripperAction', ur5_joy_control.msg.GripperAction)
     
-    #print("Waiting for server...")
     client.wait_for_server()
     
     if order == 0:
@@ -37,11 +36,8 @@ def gripper_client(order):
     # Sends the goal to the action server.
     client.send_goal(goal)
 
-    # Waits for the server to finish performing the action.
-    #client.wait_for_result() # Not needed?
-
     # Prints out the result of executing the action
-    return client.get_result()  # A FibonacciResult
+    return client.get_result()  
 
 def joyCallback(data):
     
@@ -71,18 +67,13 @@ def joyCallback(data):
     buttons = np.array(data.buttons)    
     scale_pos = 0.2
     scale_or = 0.8
-    #print(axes)
 
     height = buttons[5] - buttons[4] 
     
     if not recovering:
-        #print("Recovering: %r, PUBLISHING"%(recovering))
         pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
             scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
-    
-    else:
-        pass
-        #print "RECOVERING, can't publish"        
+          
             
     stop = True
     for ax in np.absolute(axes[0:6]):
@@ -95,12 +86,10 @@ def joyCallback(data):
         
     # Gripper control:
     if buttons[0] > 0:
-        #print("Closing gripper")
         gripper_position = gripper_client(1)
         #START ACTION
     
     elif buttons[1] > 0:
-        #print("Opening gripper")
         gripper_position = gripper_client(-1)
         #START ACTION
     
@@ -113,7 +102,6 @@ def joyCallback(data):
 def insideCallback(msg): 
     global recovering 
     recovering = msg.data
-    #rospy.logerr(recovering)
         
 if __name__ == '__main__':  
 
