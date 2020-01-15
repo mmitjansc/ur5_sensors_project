@@ -128,13 +128,14 @@ if __name__ == '__main__':
             z_min = boxes[closest_poly_idx,0,-1]
             z_max = heights[closest_poly_idx]
 
-            recovering = True
-            inside_pub.publish(recovering)
+            recovering = True            
             
-            if first_time:    
+            if first_time:
+
+                inside_pub.publish(recovering)
                         
                 #print(axes,height)
-                rospy.logwarn('OUT OF LIMITS. Recovering')       
+                rospy.logwarn('OFF LIMITS. Recovering')       
                 
                 pub.publish("stopl(5.0, 5.0)")  
                 wpose = group.get_current_pose().pose
