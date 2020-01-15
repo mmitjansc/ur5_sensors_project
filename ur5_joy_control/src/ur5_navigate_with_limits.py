@@ -41,7 +41,6 @@ def FTCallback(data):
     wrench = data.wrench
     if wrench.force.x > force_lim or wrench.force.y > force_lim or wrench.force.z > force_lim:
         pass
-        #invert_velocity()
 
 if __name__ == '__main__':  
     
@@ -131,8 +130,7 @@ if __name__ == '__main__':
             recovering = True    
 
             inside_pub.publish(recovering)
-                    
-            #print(axes,height)
+            
             rospy.logwarn('OFF LIMITS. Recovering')       
             
             pub.publish("stopl(5.0, 5.0)")  
@@ -158,14 +156,10 @@ if __name__ == '__main__':
                 b = pol_ext.interpolate(a)
                 closest_point_coords = list(b.coords)[0]
                 closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
-            
 
-            print "Positions: "
-            print curr_pos
-            print closest_point_coords
             speed_vec = closest_point_coords - curr_pos
             speed_vec /= 10.0*(np.linalg.norm(speed_vec))                
-            #print(np.linalg.norm(speed_vec))
+
             print ("Speed vector: ",speed_vec)
             pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
             
