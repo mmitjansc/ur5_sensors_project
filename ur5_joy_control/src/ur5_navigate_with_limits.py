@@ -158,7 +158,7 @@ if __name__ == '__main__':
                     closest_point_coords = list(b.coords)[0]
                     closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
                 
-                time.sleep(0.1)
+                #time.sleep(0.1)
                 
                 speed_vec = closest_point_coords - curr_pos
                 speed_vec /= 10*(np.linalg.norm(speed_vec))                
