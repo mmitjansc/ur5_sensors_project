@@ -117,10 +117,8 @@ if __name__ == '__main__':
             if d < dist:                
                 closest_poly_idx = i
                 dist = d 
-                      
         
-        
-        if not inside:
+        if not inside and first_time:
             # Switch velocity input to keep EE within ws boundaries
 
             closest_poly = eroded_polys[closest_poly_idx]
@@ -128,45 +126,43 @@ if __name__ == '__main__':
             z_min = boxes[closest_poly_idx,0,-1]
             z_max = heights[closest_poly_idx]
 
-            recovering = True            
-            
-            if first_time:
+            recovering = True    
 
-                inside_pub.publish(recovering)
-                        
-                #print(axes,height)
-                rospy.logwarn('OFF LIMITS. Recovering')       
-                
-                pub.publish("stopl(5.0, 5.0)")  
-                wpose = group.get_current_pose().pose
-
-                z = wpose.position.z
-                z_goal = z
-
-                curr_pos = np.array([wpose.position.x,wpose.position.y,z])
-                
-                if (z_min > z or z > z_max):
-                    if z < z_min:
-                        z_goal = z_min+0.01
-                    elif z > z_max:
-                        z_goal = z_max-0.01
-                    closest_point_coords = np.array([wpose.position.x, wpose.position.y, z_goal])
+            inside_pub.publish(recovering)
                     
-                if  polygons[closest_poly_idx].distance(point) > 1e-8:                
-                    pol_ext = LinearRing(closest_poly.exterior.coords)
-                    a = pol_ext.project(point)
-                    b = pol_ext.interpolate(a)
-                    closest_point_coords = list(b.coords)[0]
-                    closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
+            #print(axes,height)
+            rospy.logwarn('OFF LIMITS. Recovering')       
+            
+            pub.publish("stopl(5.0, 5.0)")  
+            wpose = group.get_current_pose().pose
+
+            z = wpose.position.z
+            z_goal = z
+
+            curr_pos = np.array([wpose.position.x,wpose.position.y,z])
+            
+            if (z_min > z or z > z_max):
+                if z < z_min:
+                    z_goal = z_min+0.01
+                elif z > z_max:
+                    z_goal = z_max-0.01
+                closest_point_coords = np.array([wpose.position.x, wpose.position.y, z_goal])
                 
-                #time.sleep(0.1)
-                
-                speed_vec = closest_point_coords - curr_pos
-                speed_vec /= 10*(np.linalg.norm(speed_vec))                
-                #print(np.linalg.norm(speed_vec))
-                
-                pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
-                
-                first_time = False       
+            if  polygons[closest_poly_idx].distance(point) > 1e-8:                
+                pol_ext = LinearRing(closest_poly.exterior.coords)
+                a = pol_ext.project(point)
+                b = pol_ext.interpolate(a)
+                closest_point_coords = list(b.coords)[0]
+                closest_point_coords = np.array([closest_point_coords[0],closest_point_coords[1],z_goal])
+            
+            #time.sleep(0.1)
+            
+            speed_vec = closest_point_coords - curr_pos
+            speed_vec /= 10*(np.linalg.norm(speed_vec))                
+            #print(np.linalg.norm(speed_vec))
+            
+            pub.publish("speedl([-%f,-%f,%f,0,0,0], 1., 100.0,3.0)"%(speed_vec[0],speed_vec[1],speed_vec[2]))
+            
+            first_time = False       
         
         rate.sleep()
