@@ -67,6 +67,8 @@ public:
 	float impulse[LENGTH+1]; // impulse response
 	int j;
 	int count;
+    bool first_time = true;
+    std::vector<float> min_press;
 	
 	enum State {resting, grasping, holding};
 	State state;
@@ -203,8 +205,7 @@ public:
     
     void IRCallback(const std_msgs::Int16::ConstPtr& msg) {        
 		
-		int sensor_val = msg->data;
-		
+		int sensor_val = msg->data;		
 		
 		if (sensor_val > 8000 && found_object == false) {
 			j = 0;
@@ -220,14 +221,9 @@ public:
 				{
 					printf("%d - IR signal sent!\n",count);
 					count++;
-					// Let's remove the sleep...
-					//Pa_Sleep( sleep_ms );
-					
-					//this->abort();
+
 				}
 
-				// Remove close as well? Will this work?
-				//this->close();
 			}
 		}
 		
@@ -243,30 +239,32 @@ public:
 		bool input = false;
 		
 		for (int i=0;i < dat.data.size(); i++) {
-			
-			if (dat.data[i] < 300) {
+
+            if (first_time) {
+                min_press.push_back(dat.data[i]);                
+            }
+            
+            float press_val = dat.data[i]/min_press[i];			
+
+			if (press_val < 0.8) {
+                // Pressure value is reduced to 80%
 				input = true;
 			}
 		}
-		
-		//std::cout << "input: " << input << std::endl;
+
+        if (first_time) first_time = false;
 		
 		int sleep_ms = 1000;
 		
 		switch (state) {
 			
 			case resting:
-				//std::cout << "resting" << std::endl;
 				if (input)  { state = grasping; }
 				break;
 				
 			case grasping:
-			
-				//std::cout << "grasping" << std::endl;
 				
 				j = 0;
-			
-				//ROS_INFO("Resending signal");
 				
 				// Stop all current PortAudio callbacks and close previous stream:
 				this->abort();
@@ -279,14 +277,9 @@ public:
 					{
 						printf("%d - Signal sent!\n",count);
 						count++;
-						// Let's remove the sleep...
-						//Pa_Sleep( sleep_ms );
-						
-						//this->abort();
+
 					}
 
-					// Remove close as well? Will this work?
-					//this->close();
 				}
 			
 				if (!input) { state = resting; } else {  state = holding; }
@@ -294,14 +287,13 @@ public:
 				break;
 						
 			case holding:
-				//std::cout << "holding" << std::endl;
+
 				if (!input) {state = resting; }
 				
 				break;
 			
 			default:
-				//std::cout << "Something's wrong..." << std::endl;
-				
+				std::cout << "Something went wrong..." << std::endl;				
 				break;
 				
 			
