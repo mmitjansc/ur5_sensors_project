@@ -66,7 +66,7 @@ while t < 500*T:
     for i in range(boxes.shape[0]):
         z_min = boxes[i,0,-1]
         z_max = z_min + heights[i]
-        print polygons[1].distance(point)
+        print(polygons[1].distance(point))
         if polygons[i].contains(point) and z_min < p[2] and p[2] < z_max:
             inside = True
             break
