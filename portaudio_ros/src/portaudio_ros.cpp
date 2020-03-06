@@ -248,7 +248,7 @@ public:
 
 			if (press_val < 0.8) {
                 // Pressure value is reduced to 80%
-                printf("Sensor %d, pressure value %f\n",i,press_val);
+                //printf("Sensor %d, pressure value %f\n",i,press_val);
 				input = true;
 			}
 		}
