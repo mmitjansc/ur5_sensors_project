@@ -68,8 +68,8 @@ def joyCallback(data):
     axes[2] = 0.5-0.5*axes[2]
     
     buttons = np.array(data.buttons)    
-    scale_pos = 0.2/1.
-    scale_or = 0.8/1.
+    scale_pos = 0.2*2
+    scale_or = 0.8*2
 
     height = buttons[5] - buttons[4] 
     
@@ -78,7 +78,7 @@ def joyCallback(data):
         print("Buttons: ",buttons)
         print("Publishing:",scale_pos*axes[0],scale_pos*axes[1],\
             scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2]))
-        pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
+        pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 1.5, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
             scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2])))
           
             
