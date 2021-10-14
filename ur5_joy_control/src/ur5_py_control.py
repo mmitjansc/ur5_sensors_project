@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import rospy
 import moveit_commander
 import moveit_msgs.msg
@@ -18,8 +20,8 @@ import ur5_joy_control.msg
 
 axes = np.zeros((8,))
 buttons = np.zeros((11,))
-first_time_4 = True
 first_time_5 = True
+first_time_2 = True
 
 def gripper_client(order):
     
@@ -43,36 +45,41 @@ def joyCallback(data):
     
     global axes
     global buttons
-    global first_time_4
     global first_time_5
+    global first_time_2
 
     gripper_val = 0
     
     axes = np.array(data.axes)
     axes[np.absolute(axes)<0.3] = 0.0
     
-    if first_time_4:
-        if int(axes[4]) != 0:
-            first_time_4 = False        
-        else:
-            axes[4] = 1.0
     if first_time_5:
         if int(axes[5]) != 0:
             first_time_5 = False        
         else:
             axes[5] = 1.0
+    if first_time_2:
+        if int(axes[2]) != 0:
+            first_time_2 = False        
+        else:
+            axes[2] = 1.0
             
-    axes[4:6] = 0.5-0.5*axes[4:6]
+    axes[5] = 0.5-0.5*axes[5]
+    axes[2] = 0.5-0.5*axes[2]
     
     buttons = np.array(data.buttons)    
-    scale_pos = 0.2
-    scale_or = 0.8
+    scale_pos = 0.2/1.
+    scale_or = 0.8/1.
 
     height = buttons[5] - buttons[4] 
     
     if not recovering:
+        print("Axes: ",axes)
+        print("Buttons: ",buttons)
+        print("Publishing:",scale_pos*axes[0],scale_pos*axes[1],\
+            scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2]))
         pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 0.7, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
-            scale_pos*height, axes[3], scale_or*axes[2], scale_or*(axes[4]-axes[5])))
+            scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2])))
           
             
     stop = True
@@ -99,6 +106,8 @@ def joyCallback(data):
     if buttons[7] > 0:
         pub.publish("powerdown()")
 
+    print('---------------------------')
+
 def insideCallback(msg): 
     global recovering 
     recovering = msg.data
@@ -115,12 +124,10 @@ if __name__ == '__main__':
     inside_sub = rospy.Subscriber("/inside_ws", Bool, insideCallback, queue_size=1)
     pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
     
-    # Setup robot UR5
+    ## Setup robot UR5
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
     group_name = "manipulator"
     group = moveit_commander.MoveGroupCommander(group_name)
 
-    while not rospy.is_shutdown():
-        
-        rate.sleep()
+    rospy.spin()
