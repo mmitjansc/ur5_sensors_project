@@ -68,17 +68,17 @@ def joyCallback(data):
     axes[2] = 0.5-0.5*axes[2]
     
     buttons = np.array(data.buttons)    
-    scale_pos = 0.2*2
+    scale_pos = 0.2*1
     scale_or = 0.8*2
 
     height = buttons[5] - buttons[4] 
     
     if not recovering:
-        print("Axes: ",axes)
-        print("Buttons: ",buttons)
-        print("Publishing:",scale_pos*axes[0],scale_pos*axes[1],\
-            scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2]))
-        pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 1.5, 100.0, 3.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
+        # print("Axes: ",axes)
+        # print("Buttons: ",buttons)
+        # print("Publishing:",scale_pos*axes[0],scale_pos*axes[1],\
+        #     scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2]))
+        pub.publish("speedl([%f,-%f,%f,%f,%f,%f], 1.5, 100.0)"%(scale_pos*axes[0],scale_pos*axes[1],\
             scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2])))
           
             
@@ -106,7 +106,7 @@ def joyCallback(data):
     if buttons[7] > 0:
         pub.publish("powerdown()")
 
-    print('---------------------------')
+    # print('---------------------------')
 
 def insideCallback(msg): 
     global recovering 
@@ -130,4 +130,9 @@ if __name__ == '__main__':
     group_name = "manipulator"
     group = moveit_commander.MoveGroupCommander(group_name)
 
-    rospy.spin()
+    # rospy.spin()
+    while not rospy.is_shutdown():
+
+        print(group.get_current_pose())
+
+        rospy.Rate(10).sleep()

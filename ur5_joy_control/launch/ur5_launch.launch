@@ -1,0 +1,19 @@
+<launch>
+
+  <include file="$(find ur5_robotiq_api)/launch/ur5_robotiq_api.launch">
+    <arg name="robot_ip" value="169.254.240.40"/>
+  </include>
+
+  <!--group ns="FT_sensor">
+    <node pkg="robotiq_force_torque_sensor" name="robotiq_sensor_connect" type="rq_sensor" output="screen" required="true"/>
+  </group-->
+
+  <!-- Gripper activation -->
+  <include file="$(find ur5_test)/launch/gripper_launch.launch"/>
+ 
+  <!-- Force torque sensor calibration -->
+  <!--include file="$(find ur5_test)/launch/ft_launch.launch"/-->
+
+</launch>
+
+
