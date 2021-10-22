@@ -125,14 +125,14 @@ if __name__ == '__main__':
     pub = rospy.Publisher("/ur_driver/URScript", String, queue_size=1)
     
     ## Setup robot UR5
-    robot = moveit_commander.RobotCommander()
-    scene = moveit_commander.PlanningSceneInterface()
-    group_name = "manipulator"
-    group = moveit_commander.MoveGroupCommander(group_name)
+    # robot = moveit_commander.RobotCommander()
+    # scene = moveit_commander.PlanningSceneInterface()
+    # group_name = "manipulator"
+    # group = moveit_commander.MoveGroupCommander(group_name)
 
-    # rospy.spin()
-    while not rospy.is_shutdown():
+    rospy.spin()
+    # while not rospy.is_shutdown():
 
-        # print(group.get_current_pose())
+    #     # print(group.get_current_pose())
 
-        rospy.Rate(10).sleep()
+    #     rospy.Rate(10).sleep()
