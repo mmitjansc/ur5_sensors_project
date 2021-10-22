@@ -74,7 +74,7 @@ def joyCallback(data):
     height = buttons[5] - buttons[4] 
     
     if not recovering:
-        # print("Axes: ",axes)
+        print("Axes: ",axes)
         # print("Buttons: ",buttons)
         # print("Publishing:",scale_pos*axes[0],scale_pos*axes[1],\
         #     scale_pos*height, axes[4], scale_or*axes[3], scale_or*(axes[5]-axes[2]))
@@ -133,6 +133,6 @@ if __name__ == '__main__':
     # rospy.spin()
     while not rospy.is_shutdown():
 
-        print(group.get_current_pose())
+        # print(group.get_current_pose())
 
         rospy.Rate(10).sleep()
