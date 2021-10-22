@@ -6,6 +6,7 @@ To enable the Xbox joystick, first connect it via USB to the PC. Then run the fo
 
 Now we can run the ROS launch file:
 
+	$ roslaunch ur5_joy_control ur5_launch.launch #To "bring up" the UR5
 	$ roslaunch ur5_joy_control navigate.launch
 	
 The `joy_node` node will publish messages of type `sensor_msgs/Joy` to the topic `/joy`, consisting of a header, a float32 *axis* array and an int32 *buttons* array. Values go from -1.0 to 1.0.
